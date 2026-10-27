@@ -140,7 +140,7 @@ function MapEmbed({ address }) {
   return (
     <figure className="map-frame">
       <img className="map-embed" src={asset("/images/map-signal-hill.png")} alt={`Map of ${address}`} />
-      <figcaption className="map-credit">© OpenStreetMap © OpenFreeMap</figcaption>
+      <figcaption className="map-credit">© OpenMapTiles © OpenStreetMap © OpenFreeMap</figcaption>
     </figure>
   );
 }
@@ -189,10 +189,20 @@ function AfterHero({ blocks, page }) {
           </p>
         </section>
         <section className="rely-card">
-          {split.card.map((block, index) => (
-            <Block key={index} block={block} page={page} />
-          ))}
-          <img src={asset(footer.logo.src)} alt={footer.logo.alt} />
+          <img className="rely-logo" src={asset(footer.logo.src)} alt={footer.logo.alt} />
+          {split.card.map((block, index) => {
+            if (block.type === "rich" && block.text === "Professional Plumbing You Can Rely On") {
+              return <h3 key={index}>{block.text}</h3>;
+            }
+            if (block.type === "rich" && block.text === "Request an Estimate Today!") {
+              return (
+                <p className="rely-cta" key={index}>
+                  {block.text}
+                </p>
+              );
+            }
+            return <Block key={index} block={block} page={page} />;
+          })}
           <a className="btn btn-orange" href={footer.phoneHref}>
             {footer.phone}
           </a>
@@ -238,18 +248,14 @@ function InnerPage({ page }) {
         {banner.map((block, index) => (
           <Block key={index} block={block} page={page} />
         ))}
+        {subtitle ? <Block block={subtitle} page={page} /> : null}
       </header>
+      {map ? <MapEmbed address={map.address} /> : null}
       {crumbs ? (
         <div className="crumb-bar">
           <Block block={crumbs} page={page} />
         </div>
       ) : null}
-      {subtitle ? (
-        <div className="banner-follow">
-          <Block block={subtitle} page={page} />
-        </div>
-      ) : null}
-      {map ? <MapEmbed address={map.address} /> : null}
       {contact ? (
         <div className="contact-grid">
           <div className="contact-form-col">

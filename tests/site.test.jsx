@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { App } from "../src/App.jsx";
@@ -194,5 +194,85 @@ describe("demo shell", () => {
     fireEvent.click(contact);
     expect(screen.queryByRole("heading", { level: 1, name: "Professional Plumbing Services" })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: "Contact" })).toBeInTheDocument();
+  });
+
+  it("closes a hover-opened dropdown when Escape is pressed", () => {
+    renderAt("/");
+    const nav = within(screen.getByRole("navigation", { name: "Primary" }));
+    const about = nav.getByRole("link", { name: (name) => name.trim() === "About" });
+    const item = about.closest(".nav-item");
+    fireEvent.mouseEnter(item);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(item).toHaveAttribute("data-closed", "true");
+  });
+
+  it("follows a Services category heading on the first touch", () => {
+    window.innerWidth = 1280;
+    renderAt("/");
+    const nav = within(screen.getByRole("navigation", { name: "Primary" }));
+    const category = nav.getByRole("link", { name: "Plumbing Installation and Repair" });
+    fireEvent.touchStart(category);
+    fireEvent.click(category);
+    expect(screen.getByRole("heading", { level: 1, name: "Plumbing Installation and Repair" })).toBeInTheDocument();
+  });
+
+  it("closes an open submenu when the pointer goes outside the menu", () => {
+    window.innerWidth = 1280;
+    renderAt("/");
+    const nav = within(screen.getByRole("navigation", { name: "Primary" }));
+    const services = nav.getByRole("link", { name: (name) => name.trim() === "Services" });
+    fireEvent.touchStart(services);
+    fireEvent.click(services);
+    expect(services.closest(".nav-item")).toHaveClass("touch-open");
+    fireEvent.pointerDown(document.body);
+    expect(services.closest(".nav-item")).not.toHaveClass("touch-open");
+    expect(services.closest(".nav-item")).toHaveAttribute("data-closed", "true");
+  });
+
+  it("puts the contact subtitle in the banner and the breadcrumb under the map", () => {
+    renderAt("/contact");
+    const banner = document.querySelector(".page-banner");
+    expect(within(banner).getByRole("heading", { level: 1, name: "Contact" })).toBeInTheDocument();
+    expect(within(banner).getByRole("heading", { level: 4, name: "Pete's Plumbing" })).toBeInTheDocument();
+    const map = document.querySelector(".map-embed");
+    const crumbs = document.querySelector(".crumb-bar");
+    expect(map.compareDocumentPosition(crumbs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(crumbs).toHaveTextContent("Home");
+    expect(crumbs).toHaveTextContent("Contact");
+    expect(screen.getByText("© OpenMapTiles © OpenStreetMap © OpenFreeMap")).toBeInTheDocument();
+    expect(screen.getAllByText(/OpenStreetMap/)).toHaveLength(1);
+  });
+
+  it("keeps city service lists under their headings", () => {
+    renderAt("/contact/best-local-plumber-service-area/lakewood-ca");
+    const main = document.querySelector(".page-main");
+    const text = main.textContent;
+    const services = text.indexOf("Our services include:");
+    const serviceItem = text.indexOf("24/7 emergency repairs");
+    const why = text.indexOf("Here's what sets us apart:");
+    const whyItem = text.indexOf("Lifetime warranty on copper re-pipes");
+    const contact = text.indexOf("Contact Us");
+    expect(services).toBeGreaterThan(-1);
+    expect(services).toBeLessThan(serviceItem);
+    expect(serviceItem).toBeLessThan(why);
+    expect(why).toBeLessThan(whyItem);
+    expect(whyItem).toBeLessThan(contact);
+    const card = document.querySelector(".rely-card");
+    const logo = card.querySelector(".rely-logo");
+    const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
+    expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("restores Home on the breadcrumbs that were missing it", () => {
+    renderAt("/4-signs-it-s-time-to-call-a-local-plumber-for-help");
+    expect(document.querySelector(".crumb-bar")).toHaveTextContent("Home");
+    expect(document.querySelector(".crumb-bar")).toHaveTextContent("4 Signs It's Time to Call a Local Plumber for Help");
+    cleanup();
+    renderAt("/service-area");
+    const crumbs = document.querySelector(".crumb-bar");
+    expect(crumbs).toHaveTextContent("Home");
+    expect(crumbs).toHaveTextContent("Contact");
+    expect(crumbs).toHaveTextContent("Serving Area");
   });
 });

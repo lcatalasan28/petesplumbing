@@ -58,7 +58,7 @@ function NavBranch({ items, onNavigate, onParentClick, onTouch }) {
   );
 }
 
-function SiteNav({ open, onNavigate, touchOpen, onParentClick, onTouch, onItemLeave }) {
+function SiteNav({ open, onNavigate, touchOpen, onParentClick, onTouch, onItemEnter, onItemLeave }) {
   return (
     <nav
       id="site-menu"
@@ -81,6 +81,7 @@ function SiteNav({ open, onNavigate, touchOpen, onParentClick, onTouch, onItemLe
             ]
               .filter(Boolean)
               .join(" ")}
+            onMouseEnter={onItemEnter}
             onMouseLeave={onItemLeave}
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) onItemLeave(event);
@@ -131,9 +132,28 @@ export function Layout({ children }) {
   useEffect(() => {
     setOpen(false);
     setTouchOpen(null);
+    document.querySelectorAll(".nav-item").forEach((item) => {
+      item.removeAttribute("data-closed");
+      item.removeAttribute("data-open");
+      item.removeAttribute("data-hover");
+    });
   }, [location.pathname]);
 
   useEffect(() => {
+    function closeDropdowns(event) {
+      const items = document.querySelectorAll(
+        ".nav-item:hover, .nav-item:focus-within, .nav-item.touch-open, .nav-item[data-open], .nav-item[data-hover]",
+      );
+      items.forEach((item) => {
+        if (!item.querySelector(":scope > .submenu")) return;
+        item.removeAttribute("data-open");
+        item.setAttribute("data-closed", "true");
+      });
+      setTouchOpen(null);
+      const current = event?.target instanceof Element ? event.target : document.activeElement;
+      const item = current instanceof Element ? current.closest(".nav-item") : null;
+      if (item?.querySelector(":scope > .submenu")) item.querySelector(":scope > a")?.focus();
+    }
     function onKey(event) {
       if (event.key !== "Escape") return;
       if (open) {
@@ -142,21 +162,25 @@ export function Layout({ children }) {
         menuButton.current?.focus();
         return;
       }
-      setTouchOpen(null);
-      document.querySelectorAll("[data-open]").forEach((node) => node.removeAttribute("data-open"));
-      const current = event.target instanceof Element ? event.target : document.activeElement;
-      const item = current instanceof Element ? current.closest(".nav-item") : null;
-      if (!item?.querySelector(":scope > .submenu")) return;
-      item.setAttribute("data-closed", "true");
-      item.querySelector(":scope > a")?.focus();
+      closeDropdowns(event);
+    }
+    function onPointerDown(event) {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest(".site-nav") || target?.closest(".menu-toggle")) return;
+      closeDropdowns(event);
     }
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
   }, [open]);
 
   function noteTouch(event) {
     if (event?.pointerType && event.pointerType !== "touch") return;
     touched.current = true;
+    event.currentTarget.closest(".nav-item")?.removeAttribute("data-closed");
   }
 
   function onParentClick(event, item) {
@@ -164,14 +188,21 @@ export function Layout({ children }) {
     const hasChildren = Boolean(item.children?.length && parent?.querySelector(":scope > .submenu"));
     const fromTouch = touched.current;
     touched.current = false;
-    if (!hasChildren || !fromTouch || window.innerWidth < 1000) return;
-    if (parent.dataset.open === "true" || (parent.classList.contains("nav-item") && touchOpen === item.text)) return;
+    const topLevel = Boolean(parent?.classList.contains("nav-item"));
+    if (!hasChildren || !fromTouch || window.innerWidth < 1000 || !topLevel) return;
+    if (parent.dataset.open === "true" || touchOpen === item.text) return;
     event.preventDefault();
     parent.setAttribute("data-open", "true");
-    if (parent.classList.contains("nav-item")) setTouchOpen(item.text);
+    setTouchOpen(item.text);
+  }
+
+  function onItemEnter(event) {
+    event.currentTarget.setAttribute("data-hover", "true");
+    event.currentTarget.removeAttribute("data-closed");
   }
 
   function onItemLeave(event) {
+    event.currentTarget.removeAttribute("data-hover");
     event.currentTarget.removeAttribute("data-closed");
   }
 
@@ -210,7 +241,10 @@ export function Layout({ children }) {
               aria-expanded={open}
               aria-controls="site-menu"
               aria-label="Menu"
-              onClick={() => setOpen((value) => !value)}
+              onClick={() => {
+                document.querySelectorAll(".nav-item").forEach((item) => item.removeAttribute("data-closed"));
+                setOpen((value) => !value);
+              }}
             >
               <span className="burger" aria-hidden="true" />
             </button>
@@ -229,6 +263,7 @@ export function Layout({ children }) {
             onNavigate={() => setOpen(false)}
             onParentClick={onParentClick}
             onTouch={noteTouch}
+            onItemEnter={onItemEnter}
             onItemLeave={onItemLeave}
           />
         </header>
@@ -279,10 +314,19 @@ function Footer() {
               <a href={footer.phoneHref}>{footer.phone}</a>
             </p>
             <p>
-              <Link to="/contact#ICcontactform">Send a Message</Link>
+              <Link className="btn btn-orange footer-message" to="/contact#ICcontactform">
+                Send a Message
+              </Link>
             </p>
             <p>
-              <a href={footer.facebook}>Facebook</a>
+              <a className="social-facebook" href={footer.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false">
+                  <path
+                    fill="currentColor"
+                    d="M22 12.07C22 6.5 17.52 2 12 2S2 6.5 2 12.07C2 17.1 5.66 21.24 10.44 22v-7.03H7.9v-2.9h2.54V9.84c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.9h-2.34V22C18.34 21.24 22 17.1 22 12.07z"
+                  />
+                </svg>
+              </a>
             </p>
           </section>
           <section>
