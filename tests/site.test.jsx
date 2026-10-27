@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -262,6 +262,23 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("publishes Plumber and LocalBusiness details without hours or a rating", () => {
+    renderAt("/");
+    const data = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+    expect(data["@type"]).toEqual(["Plumber", "LocalBusiness"]);
+    expect(data.name).toBe("Pete's Plumbing");
+    expect(data.url).toBe("https://www.petes-plumbing.com/");
+    expect(data.telephone).toBe("(562) 599-0106");
+    expect(data.address.streetAddress).toBe("3099 E Pacific Coast Hwy");
+    expect(data.address.addressLocality).toBe("Signal Hill");
+    expect(data.address.addressRegion).toBe("CA");
+    expect(data.address.postalCode).toBe("90755");
+    expect(data.identifier).toBe("CSLB #277178");
+    expect(data.openingHours).toBeUndefined();
+    expect(data.aggregateRating).toBeUndefined();
+    expect(JSON.stringify(data)).not.toMatch(/openingHours|aggregateRating|Google|BBB/);
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
