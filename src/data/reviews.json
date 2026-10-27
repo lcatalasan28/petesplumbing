@@ -1,0 +1,88 @@
+{
+  "source": "https://hibu.us/api/public/v2/merchants/58254/reviews.json?limit=10&page=1&filter=null&thirdParty=false&randomize=false&skipPagination=false&currentLocationReviewsOnly=false",
+  "summary": {
+    "average": 4.8,
+    "count": 1184,
+    "googleAverage": 4.9,
+    "googleCount": 872
+  },
+  "reviews": [
+    {
+      "name": "Noah H",
+      "rating": 5,
+      "date": "2026-10-26",
+      "displayDate": "10/26/2026",
+      "comment": "Juan and his assistant arrived early, completed the job quickly, and were friendly and accommodating with my many questions. Thanks, Petr’s!"
+    },
+    {
+      "name": "Hektor R",
+      "rating": 5,
+      "date": "2026-10-24",
+      "displayDate": "10/24/2026",
+      "comment": "Ronald is a respectful and professional worker. Great man. Very satisfy with his service. Hektor"
+    },
+    {
+      "name": "Cody S",
+      "rating": 5,
+      "date": "2026-10-23",
+      "displayDate": "10/23/2026",
+      "comment": "Fantastic company. I have worked with them on several projects including kitchen remodel. Responsive. Clean they use a shop vac to clean. They leave no mess. They speak to you politely and respond to all questions with answers, not lies or threats. They are our go to plumbers!",
+      "reply": "Thank you for your continued trust in Pete’s Plumbing! We truly appreciate your loyalty and are glad to be your go-to plumbers. Our team takes pride in providing honest, professional service and leaving every space clean. Thanks for your support! - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Ronald Mc C",
+      "rating": 5,
+      "date": "2026-10-23",
+      "displayDate": "10/23/2026",
+      "comment": "Instead two hose bins for the washing machine.",
+      "reply": "Thank you so much for your business Ronald! We appreciate you and are happy to help. - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Tracy W",
+      "rating": 5,
+      "date": "2026-10-23",
+      "displayDate": "10/23/2026",
+      "comment": "The technician was great. He did a good job. Very thorough. Happy with the service.",
+      "reply": "Thank you for the great review! We're happy to hear that our technician provided thorough, quality service. We truly appreciate your trust in Pete’s Plumbing and look forward to helping you with any future plumbing needs! - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Ed B",
+      "rating": 5,
+      "date": "2026-10-22",
+      "displayDate": "10/22/2026",
+      "comment": "Shiloh was on time and did the work exactly as we wanted and were promised. Very good price, with a free quote that matched the final invoice. Quick and easy. Highly recommended",
+      "reply": "Thank you so much for your kind words and recommendation! We'll be sure to share this with Shiloh. We’re delighted to hear that you were happy with the service, pricing, and overall experience. We really appreciate your support and look forward to helping you again in the future! - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Catalina M",
+      "rating": 5,
+      "date": "2026-10-21",
+      "displayDate": "10/21/2026",
+      "comment": "It was so easy to make an appointment and they were able to come out same day. The two service men were so great and friendly and they finished the job super fast.",
+      "reply": "Thank you so much for the wonderful review! We’re glad scheduling was easy and that we could get someone out to you the same day. We’ll be sure to pass along your kind words to our two service technicians. At Pete’s Plumbing, we strive to provide friendly, efficient service, and we truly appreciate you choosing us. - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Bill S",
+      "rating": 5,
+      "date": "2026-10-16",
+      "displayDate": "10/16/2026",
+      "comment": "Great service, everyone we have dealt with has been fantastic",
+      "reply": "Thank you for the great review! We appreciate your business and are glad you chose Pete’s Plumbing. We’re always here when you need us! - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Susan L",
+      "rating": 5,
+      "date": "2026-10-15",
+      "displayDate": "10/15/2026",
+      "comment": "Faucet replacement. Great service",
+      "reply": "It means a lot to our team to hear from happy customers. Thank you for choosing Pete’s Plumbing and for your continued support! - Tony Hillis – President – tonyhillis@petes-plumbing.com"
+    },
+    {
+      "name": "Trey T",
+      "rating": 5,
+      "date": "2026-10-14",
+      "displayDate": "10/14/2026",
+      "comment": "Great experience with Mike from Pete’s Plumbing! We had a clogged kitchen sink that was causing water to backflow. Mike came out, diagnosed the issue, and got everything fixed and working properly again. We really appreciate his help and would definitely recommend him to anyone needing plumbing services!"
+    }
+  ]
+}
