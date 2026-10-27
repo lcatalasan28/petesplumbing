@@ -20,6 +20,18 @@ function isRequired(field) {
   return Boolean(field.required) || /\*\s*$/.test(field.label || "");
 }
 
+function fieldPlaceholder(field, variant) {
+  if (field.placeholder) return field.placeholder;
+  const label = field.label || "";
+  if (variant === "hero") {
+    if (/name/i.test(label)) return "Full Name*";
+    if (/phone/i.test(label)) return "Phone*";
+    if (/email/i.test(label)) return "Email*";
+  }
+  if (variant === "estimate" && field.type !== "select") return label;
+  return "";
+}
+
 export function LeadForm({ variant = "contact", fields, page }) {
   const navigate = useNavigate();
   const formId = useId();
@@ -54,6 +66,7 @@ export function LeadForm({ variant = "contact", fields, page }) {
 
   return (
     <form className={`lead-form lead-form-${variant}`} id={variant === "contact" ? "ICcontactform" : undefined} onSubmit={onSubmit}>
+      {variant === "hero" ? <h2>Request Estimate</h2> : null}
       {fields.map((field) => {
         const label = fieldLabel(field);
         const required = isRequired(field);
@@ -87,22 +100,25 @@ export function LeadForm({ variant = "contact", fields, page }) {
           );
         }
 
+        const hideLabel = field.hideLabel || variant === "hero" || (variant === "estimate" && field.type !== "checkboxes" && field.type !== "checkbox");
+        const placeholder = fieldPlaceholder(field, variant);
+
         if (field.type === "select") {
           const options = field.options || [];
+          const starred = options[0] && /\*\s*$/.test(options[0]);
           return (
             <label key={label} className="field" htmlFor={id}>
-              {field.hideLabel ? null : <span>{label}</span>}
-              <select
-                id={id}
-                name={name}
-                required={required}
-                defaultValue=""
-                aria-label={field.hideLabel ? label : undefined}
-              >
+              <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
+              <select id={id} name={name} required={required} defaultValue="">
+                {starred ? null : (
+                  <option value="" disabled>
+                    {label}
+                  </option>
+                )}
                 {options.map((option, index) => {
-                  const placeholder = index === 0 && /\*\s*$/.test(option);
+                  const isPlaceholder = index === 0 && /\*\s*$/.test(option);
                   return (
-                    <option key={`${option}-${index}`} value={placeholder ? "" : option} disabled={placeholder}>
+                    <option key={`${option}-${index}`} value={isPlaceholder ? "" : option} disabled={isPlaceholder}>
                       {option}
                     </option>
                   );
@@ -115,8 +131,8 @@ export function LeadForm({ variant = "contact", fields, page }) {
         if (field.type === "textarea") {
           return (
             <label key={label} className="field" htmlFor={id}>
-              <span>{label}</span>
-              <textarea id={id} name={name} required={required} rows={5} />
+              <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
+              <textarea id={id} name={name} required={required} rows={5} placeholder={placeholder || undefined} />
             </label>
           );
         }
@@ -124,8 +140,8 @@ export function LeadForm({ variant = "contact", fields, page }) {
         const inputType = field.type === "email" || field.type === "tel" ? field.type : "text";
         return (
           <label key={label} className="field" htmlFor={id}>
-            <span>{label}</span>
-            <input id={id} name={name} type={inputType} required={required} />
+            <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
+            <input id={id} name={name} type={inputType} required={required} placeholder={placeholder || undefined} />
           </label>
         );
       })}
