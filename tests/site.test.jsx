@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -262,6 +262,19 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("tells the About story with facts already on the site", () => {
+    renderAt("/about");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    const story = screen.getByText(/provides residential and commercial plumbing in Greater Long Beach and Lakewood, CA/);
+    expect(story).toHaveTextContent("established in 1972");
+    expect(story).toHaveTextContent("3099 E Pacific Coast Hwy, Signal Hill, CA 90755");
+    expect(story).toHaveTextContent("(562) 599-0106");
+    expect(story).toHaveTextContent("CSLB License #277178");
+    expect(story.textContent).not.toMatch(/24\/7|Google|BBB|over 50 years|fee/i);
+    expect(screen.getByText("Residential Plumbing")).toBeInTheDocument();
+    expect(screen.getByText("1972")).toBeInTheDocument();
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
