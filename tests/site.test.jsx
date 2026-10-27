@@ -296,6 +296,18 @@ describe("demo shell", () => {
     expect(nap).toHaveTextContent("(562) 599-0106");
   });
 
+  it("keeps a single ampersand in the capability statement description", () => {
+    const page = pages.find((item) => item.route === "/capability-statement/");
+    expect(page.description).toContain("Greater Long Beach & Lakewood");
+    expect(page.description).not.toContain("&amp;");
+    renderAt("/capability-statement");
+    const meta = document.querySelector('meta[name="description"]');
+    expect(meta.getAttribute("content")).toBe(page.description);
+    expect(meta.getAttribute("content")).not.toContain("&amp;");
+    expect(meta.outerHTML).toContain("Long Beach &amp; Lakewood");
+    expect(meta.outerHTML).not.toContain("&amp;amp;");
+  });
+
   it("restores Home on the breadcrumbs that were missing it", () => {
     renderAt("/4-signs-it-s-time-to-call-a-local-plumber-for-help");
     expect(document.querySelector(".crumb-bar")).toHaveTextContent("Home");
