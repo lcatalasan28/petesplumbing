@@ -1,0 +1,135 @@
+import { useId, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { submitLead } from "../lead.js";
+
+const SUBMIT_LABEL = {
+  hero: "Send",
+  contact: "Send Message",
+  estimate: "Request Estimate",
+};
+
+function fieldLabel(field) {
+  const label = field.label || "";
+  if (field.type === "checkbox" && /^opt-in\s+/i.test(label)) {
+    return label.replace(/^opt-in\s+/i, "");
+  }
+  return label;
+}
+
+function isRequired(field) {
+  return Boolean(field.required) || /\*\s*$/.test(field.label || "");
+}
+
+export function LeadForm({ variant = "contact", fields, page }) {
+  const navigate = useNavigate();
+  const formId = useId();
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+  const submitLabel = SUBMIT_LABEL[variant] || "Send";
+
+  async function onSubmit(event) {
+    event.preventDefault();
+    setError("");
+    const data = new FormData(event.currentTarget);
+    const payload = { page, form: variant };
+    for (const [key, value] of data.entries()) {
+      const text = String(value).trim();
+      if (!text) continue;
+      if (payload[key]) {
+        payload[key] = Array.isArray(payload[key]) ? [...payload[key], text] : [payload[key], text];
+      } else {
+        payload[key] = text;
+      }
+    }
+
+    setPending(true);
+    try {
+      await submitLead(payload);
+      navigate("/thank-you");
+    } catch {
+      setError("Oops, there was an error sending your message. Please try again later.");
+      setPending(false);
+    }
+  }
+
+  return (
+    <form className={`lead-form lead-form-${variant}`} id={variant === "contact" ? "ICcontactform" : undefined} onSubmit={onSubmit}>
+      {fields.map((field) => {
+        const label = fieldLabel(field);
+        const required = isRequired(field);
+        const name = label.replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "field";
+        const id = `${formId}-${name}`;
+        const legend = field.type === "checkbox" && /^opt-in\s+/i.test(field.label || "") ? "Opt-In" : "";
+
+        if (field.type === "checkboxes") {
+          return (
+            <fieldset key={label} className="field">
+              <legend>{label}</legend>
+              {(field.options || []).map((option) => (
+                <label key={option} className="check">
+                  <input type="checkbox" name={name} value={option} />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </fieldset>
+          );
+        }
+
+        if (field.type === "checkbox") {
+          return (
+            <fieldset key={label} className="field">
+              {legend ? <legend>{legend}</legend> : null}
+              <label className="check" htmlFor={id}>
+                <input id={id} type="checkbox" name={name} value="yes" required={required} />
+                <span>{label}</span>
+              </label>
+            </fieldset>
+          );
+        }
+
+        if (field.type === "select") {
+          return (
+            <label key={label} className="field" htmlFor={id}>
+              <span>{label}</span>
+              <select id={id} name={name} required={required} defaultValue="">
+                <option value="" disabled>
+                  {label.replace("*", "")}
+                </option>
+                {(field.options || []).map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          );
+        }
+
+        if (field.type === "textarea") {
+          return (
+            <label key={label} className="field" htmlFor={id}>
+              <span>{label}</span>
+              <textarea id={id} name={name} required={required} rows={5} />
+            </label>
+          );
+        }
+
+        const inputType = field.type === "email" || field.type === "tel" ? field.type : "text";
+        return (
+          <label key={label} className="field" htmlFor={id}>
+            <span>{label}</span>
+            <input id={id} name={name} type={inputType} required={required} />
+          </label>
+        );
+      })}
+      {error ? (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      ) : null}
+      <button type="submit" className="btn btn-orange" disabled={pending}>
+        {submitLabel}
+      </button>
+    </form>
+  );
+}
