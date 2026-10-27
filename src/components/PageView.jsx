@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
+import footer from "../data/footer.json";
 import reviews from "../data/reviews.json";
 import { asset, routePath } from "../assets.js";
 import { LeadForm } from "./LeadForm.jsx";
@@ -112,7 +113,7 @@ export function PageView({ page }) {
       ) : (
         <InnerPage page={page} />
       )}
-      {page.hero ? (page.route === "/" ? <HomeRest blocks={rest} page={page} /> : <BlockList blocks={rest} page={page} />) : null}
+      {page.hero ? (page.route === "/" ? <HomeRest blocks={rest} page={page} /> : <AfterHero blocks={rest} page={page} />) : null}
     </article>
   );
 }
@@ -135,11 +136,78 @@ function BlockList({ blocks, page, className = "page-body" }) {
   );
 }
 
+function MapEmbed({ address }) {
+  return (
+    <figure className="map-frame">
+      <img className="map-embed" src={asset("/images/map-signal-hill.png")} alt={`Map of ${address}`} />
+      <figcaption className="map-credit">© OpenStreetMap © OpenFreeMap</figcaption>
+    </figure>
+  );
+}
+
+function BrandLogos() {
+  return (
+    <ul className="brand-logos brand-logos-page">
+      {footer.logos.map((logo) => (
+        <li key={logo.src}>
+          <img src={asset(logo.src)} alt={logo.alt} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function splitSidebar(blocks) {
+  const reviewsAt = blocks.findIndex((block) => block.type === "heading" && block.text === "Reviews");
+  const cardAt = blocks.findIndex((block) => block.type === "rich" && block.text === "Professional Plumbing You Can Rely On");
+  if (reviewsAt < 0 || cardAt < 0) return null;
+  let cardEnd = cardAt;
+  while (cardEnd < blocks.length && blocks[cardEnd].type === "rich") cardEnd += 1;
+  return {
+    main: [...blocks.slice(0, reviewsAt), ...blocks.slice(reviewsAt + 1, cardAt), ...blocks.slice(cardEnd)],
+    reviewHeading: blocks[reviewsAt],
+    card: blocks.slice(cardAt, cardEnd),
+  };
+}
+
+function AfterHero({ blocks, page }) {
+  const split = splitSidebar(blocks);
+  if (!split) return <BlockList blocks={blocks} page={page} />;
+  return (
+    <div className="page-with-aside">
+      <div className="page-main">
+        <BlockList blocks={split.main} page={page} className="page-main-body" />
+      </div>
+      <aside className="page-aside">
+        <section className="reviews-box">
+          <Block block={split.reviewHeading} page={page} />
+          <p className="rating-big">
+            <span className="rating-score">{reviews.summary.average}</span> <span className="stars" aria-hidden="true">★★★★★</span>
+          </p>
+          <p>
+            <Link to="/reviews">({reviews.summary.count} Ratings &amp; Reviews)</Link>
+          </p>
+        </section>
+        <section className="rely-card">
+          {split.card.map((block, index) => (
+            <Block key={index} block={block} page={page} />
+          ))}
+          <img src={asset(footer.logo.src)} alt={footer.logo.alt} />
+          <a className="btn btn-orange" href={footer.phoneHref}>
+            {footer.phone}
+          </a>
+        </section>
+      </aside>
+    </div>
+  );
+}
+
 function InnerPage({ page }) {
   const banner = [];
   const rest = [];
   let map = null;
   let crumbs = null;
+  let subtitle = null;
   for (const block of page.blocks) {
     if (block.type === "crumbs" && !crumbs) {
       crumbs = block;
@@ -149,8 +217,12 @@ function InnerPage({ page }) {
       map = block;
       continue;
     }
-    if (rest.length === 0 && block.type === "heading" && banner.length < 2) {
+    if (rest.length === 0 && !subtitle && block.type === "heading" && banner.length === 0) {
       banner.push(block);
+      continue;
+    }
+    if (rest.length === 0 && !subtitle && block.type === "heading" && block.text === "Pete's Plumbing") {
+      subtitle = block;
       continue;
     }
     rest.push(block);
@@ -166,11 +238,18 @@ function InnerPage({ page }) {
         {banner.map((block, index) => (
           <Block key={index} block={block} page={page} />
         ))}
-        {crumbs ? <Block block={crumbs} page={page} /> : null}
       </header>
-      {map ? (
-        <img className="map-embed" src={asset("/images/map-signal-hill.png")} alt={`Map of ${map.address}`} />
+      {crumbs ? (
+        <div className="crumb-bar">
+          <Block block={crumbs} page={page} />
+        </div>
       ) : null}
+      {subtitle ? (
+        <div className="banner-follow">
+          <Block block={subtitle} page={page} />
+        </div>
+      ) : null}
+      {map ? <MapEmbed address={map.address} /> : null}
       {contact ? (
         <div className="contact-grid">
           <div className="contact-form-col">
@@ -179,26 +258,57 @@ function InnerPage({ page }) {
             ))}
           </div>
           <div className="contact-info-col">
-            <p className="address">
-              {map?.address}{" "}
-              <a href={map?.href || DIRECTIONS}>{map?.label || "Get Directions"}</a>
-            </p>
-            {rest.slice(formAt + 1).map((block, index) => (
-              <Block key={index} block={block} page={page} />
-            ))}
+            <ContactInfo blocks={rest.slice(formAt + 1)} page={page} map={map} />
           </div>
         </div>
       ) : estimate ? (
-        <div className="estimate-card">
-          {rest.map((block, index) => (
-            <Block key={index} block={block} page={page} />
-          ))}
-        </div>
+        <>
+          <div className="estimate-card">
+            {rest.map((block, index) => (
+              <Block key={index} block={block} page={page} />
+            ))}
+          </div>
+          <BrandLogos />
+        </>
       ) : (
         <BlockList blocks={rest} page={page} />
       )}
     </>
   );
+}
+
+function ContactInfo({ blocks, page, map }) {
+  let placed = false;
+  const nodes = [];
+  blocks.forEach((block, index) => {
+    nodes.push(<Block key={index} block={block} page={page} />);
+    if (!placed && block.type === "rich" && block.text === "Pete's Plumbing") {
+      placed = true;
+      nodes.push(
+        <p className="address" key="address">
+          {map?.address}
+        </p>,
+        <p key="directions">
+          <a className="btn btn-orange" href={map?.href || DIRECTIONS}>
+            {map?.label || "Get Directions"}
+          </a>
+        </p>,
+      );
+    }
+  });
+  if (!placed) {
+    nodes.unshift(
+      <p className="address" key="address">
+        {map?.address}
+      </p>,
+      <p key="directions">
+        <a className="btn btn-orange" href={map?.href || DIRECTIONS}>
+          {map?.label || "Get Directions"}
+        </a>
+      </p>,
+    );
+  }
+  return nodes;
 }
 
 function HomeRest({ blocks, page }) {
@@ -377,24 +487,38 @@ function Block({ block, page }) {
     case "map":
       return (
         <div className="map-block">
-          <img className="map-embed" src={asset("/images/map-signal-hill.png")} alt={`Map of ${block.address}`} />
+          <MapEmbed address={block.address} />
           <p className="address">
             {block.address}{" "}
-            <a href={block.href || DIRECTIONS}>{block.label || "Get Directions"}</a>
+            <a className="btn btn-orange" href={block.href || DIRECTIONS}>
+              {block.label || "Get Directions"}
+            </a>
           </p>
         </div>
       );
-    case "crumbs":
+    case "crumbs": {
+      const links = block.links || [];
+      let current = (block.text || "").trim();
+      for (const link of links) {
+        if (current.startsWith(link.text)) current = current.slice(link.text.length).trim();
+      }
       return (
         <p className="crumbs">
-          {block.links?.map((link, index) => (
+          {links.map((link, index) => (
             <span key={`${link.text}-${index}`}>
               {index > 0 ? " / " : null}
               <Link to={routePath(link.href)}>{link.text}</Link>
             </span>
           ))}
+          {current ? (
+            <span>
+              {links.length ? " / " : null}
+              {current}
+            </span>
+          ) : null}
         </p>
       );
+    }
     case "video":
       return (
         <video controls preload="none" poster={asset(block.poster)}>

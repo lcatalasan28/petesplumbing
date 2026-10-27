@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { App } from "../src/App.jsx";
@@ -143,5 +143,56 @@ describe("demo shell", () => {
     renderAt("/faucet-repair");
     expect(screen.getByText("Appliance & Plumbing Installation and Repair")).toBeInTheDocument();
     expect(screen.getByText(faq.items[0].q)).toBeInTheDocument();
+  });
+
+  it("starts Contact Method with a blank option", () => {
+    renderAt("/request-estimate");
+    const method = screen.getByLabelText("Contact Method*");
+    expect(method).toHaveValue("");
+    expect(method.options[0]).toBeDisabled();
+    expect(method.options[0]).toHaveAttribute("hidden");
+    expect(method.options[0].text).toBe("");
+    expect(method.options[1].text).toBe("Email");
+    expect(method.options[2].text).toBe("Phone");
+  });
+
+  it("closes the mobile menu when Escape is pressed", () => {
+    renderAt("/");
+    const menu = screen.getByRole("button", { name: "Menu" });
+    fireEvent.click(menu);
+    expect(menu).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(menu).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById("site-menu")).not.toHaveClass("open");
+    expect(menu).toHaveFocus();
+  });
+
+  it("closes a desktop dropdown when Escape is pressed", () => {
+    renderAt("/");
+    const nav = within(screen.getByRole("navigation", { name: "Primary" }));
+    const capability = nav.getByRole("link", { name: "Capability Statement" });
+    capability.focus();
+    fireEvent.keyDown(capability, { key: "Escape" });
+    const about = nav.getByRole("link", { name: (name) => name.trim() === "About" });
+    expect(about.closest(".nav-item")).toHaveAttribute("data-closed", "true");
+    expect(about).toHaveFocus();
+  });
+
+  it("opens desktop dropdowns on the first touch instead of navigating", () => {
+    window.innerWidth = 1280;
+    renderAt("/");
+    const nav = within(screen.getByRole("navigation", { name: "Primary" }));
+    for (const label of ["Services", "About", "Contact"]) {
+      const link = nav.getByRole("link", { name: (name) => name.trim() === label });
+      fireEvent.touchStart(link);
+      fireEvent.click(link);
+      expect(link.closest(".nav-item")).toHaveClass("touch-open");
+      expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
+    }
+    const contact = nav.getByRole("link", { name: (name) => name.trim() === "Contact" });
+    fireEvent.touchStart(contact);
+    fireEvent.click(contact);
+    expect(screen.queryByRole("heading", { level: 1, name: "Professional Plumbing Services" })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Contact" })).toBeInTheDocument();
   });
 });

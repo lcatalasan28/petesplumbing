@@ -76,7 +76,7 @@ export function LeadForm({ variant = "contact", fields, page }) {
 
         if (field.type === "checkboxes") {
           return (
-            <fieldset key={label} className="field">
+            <fieldset key={label} className="field choice-row">
               <legend>{label}</legend>
               {(field.options || []).map((option) => (
                 <label key={option} className="check">
@@ -110,11 +110,7 @@ export function LeadForm({ variant = "contact", fields, page }) {
             <label key={label} className="field" htmlFor={id}>
               <span className={hideLabel ? "sr-only" : undefined}>{label}</span>
               <select id={id} name={name} required={required} defaultValue="">
-                {starred ? null : (
-                  <option value="" disabled>
-                    {label}
-                  </option>
-                )}
+                {starred ? null : <option value="" disabled hidden></option>}
                 {options.map((option, index) => {
                   const isPlaceholder = index === 0 && /\*\s*$/.test(option);
                   return (
