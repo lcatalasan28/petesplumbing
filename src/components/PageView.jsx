@@ -90,30 +90,76 @@ function ReviewSummary() {
   );
 }
 
+function HomeHero({ page, form }) {
+  const average = reviews.summary.average;
+  const countLabel = reviews.summary.count.toLocaleString("en-US");
+  return (
+    <header className="hero home-hero">
+      <img className="home-hero-photo" src={asset(page.hero)} alt="" />
+      <div className="home-hero-scrim">
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <h1>
+              Long Beach's Trusted Plumbers, Rated {average} by {countLabel} Customers
+            </h1>
+            <p>
+              Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of
+              experience. CA License #277178.
+            </p>
+            <div className="home-hero-ctas">
+              <Link className="btn btn-orange" to="/request-estimate">
+                Request an Estimate
+              </Link>
+              <a className="btn btn-outline" href="tel:+15625990106">
+                Call (562) 599-0106
+              </a>
+            </div>
+            <p className="home-hero-trust">
+              <Link to="/reviews">
+                <span className="stars" aria-hidden="true">
+                  ★★★★★
+                </span>
+                {average} · {countLabel} Ratings &amp; Reviews
+              </Link>
+              <span>Licensed · CSLB #277178</span>
+            </p>
+          </div>
+          {form ? <Block block={form} page={page} /> : null}
+        </div>
+      </div>
+    </header>
+  );
+}
+
 export function PageView({ page }) {
   const heroEnd = page.hero ? page.blocks.findIndex((block) => block.type === "form") : -1;
   const heroBlocks = heroEnd >= 0 ? page.blocks.slice(0, heroEnd + 1) : [];
   const rest = heroEnd >= 0 ? page.blocks.slice(heroEnd + 1) : page.blocks;
   const copy = heroBlocks.filter((block) => block.type !== "form");
   const form = heroBlocks.find((block) => block.type === "form");
+  const home = page.route === "/";
 
   return (
     <article className={page.hero ? "page has-hero" : "page"}>
       {heroBlocks.length ? (
-        <header className="hero" style={{ backgroundImage: `url(${asset(page.hero)})` }}>
-          <div className="hero-inner">
-            <div className="hero-copy">
-              {copy.map((block, index) => (
-                <Block key={index} block={block} page={page} />
-              ))}
+        home ? (
+          <HomeHero page={page} form={form} />
+        ) : (
+          <header className="hero" style={{ backgroundImage: `url(${asset(page.hero)})` }}>
+            <div className="hero-inner">
+              <div className="hero-copy">
+                {copy.map((block, index) => (
+                  <Block key={index} block={block} page={page} />
+                ))}
+              </div>
+              {form ? <Block block={form} page={page} /> : null}
             </div>
-            {form ? <Block block={form} page={page} /> : null}
-          </div>
-        </header>
+          </header>
+        )
       ) : (
         <InnerPage page={page} />
       )}
-      {page.hero ? (page.route === "/" ? <HomeRest blocks={rest} page={page} /> : <AfterHero blocks={rest} page={page} />) : null}
+      {page.hero ? (home ? <HomeRest blocks={rest} page={page} /> : <AfterHero blocks={rest} page={page} />) : null}
     </article>
   );
 }
