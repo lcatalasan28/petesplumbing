@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, afterEach } from "vitest";
@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -262,6 +262,17 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("lazy-loads images below the fold and keeps the header logo eager", () => {
+    renderAt("/");
+    expect(document.querySelector(".logo-link img")).toHaveAttribute("loading", "eager");
+    expect(document.querySelector(".service-card img")).toHaveAttribute("loading", "lazy");
+    expect(document.querySelector(".brand-logos img")).toHaveAttribute("loading", "lazy");
+    const html = readFileSync("index.html", "utf8");
+    expect(html).not.toMatch(/googletagmanager|google-analytics|facebook\.net|doubleclick/i);
+    expect(statSync("public/images/petes-plumbing-hero-shower-repair-1920w.jpg").size).toBeLessThan(500_000);
+    expect(statSync("public/images/petes-plumbing-hero-tankless-water-heater-services-1920w.jpg").size).toBeLessThan(300_000);
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
