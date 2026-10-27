@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -262,6 +262,21 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("features existing review quotes and the license near the home actions", () => {
+    renderAt("/");
+    const quote = document.querySelector(".quote-card");
+    expect(quote).toHaveTextContent("Juan and his assistant arrived early");
+    expect(quote).toHaveTextContent("Noah H");
+    expect(quote).not.toHaveTextContent("Google");
+    const rating = within(quote).getByRole("link", { name: /4\.8 · 1,184 Ratings & Reviews/ });
+    expect(rating).toHaveAttribute("href", "/reviews");
+    const header = document.querySelector(".rating-link");
+    expect(header).toHaveAttribute("href", "/reviews");
+    expect(header).toHaveTextContent("4.8");
+    expect(header).toHaveTextContent("1,184");
+    expect(document.querySelector(".hero-license")).toHaveTextContent("CSLB #277178");
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {

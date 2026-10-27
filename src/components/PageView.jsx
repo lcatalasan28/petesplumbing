@@ -106,6 +106,7 @@ export function PageView({ page }) {
               {copy.map((block, index) => (
                 <Block key={index} block={block} page={page} />
               ))}
+              {page.route === "/" ? <p className="hero-license">CSLB #277178</p> : null}
             </div>
             {form ? <Block block={form} page={page} /> : null}
           </div>
@@ -386,6 +387,21 @@ function HomeRest({ blocks, page }) {
           {quote.map((block, index) => (
             <Block key={index} block={block} page={page} />
           ))}
+          <ul className="home-quotes">
+            {reviews.reviews.slice(0, 3).map((review) => (
+              <li key={`${review.name}-${review.date}`}>
+                <blockquote>{review.comment}</blockquote>
+                <p>
+                  <span className="stars" aria-hidden="true">★★★★★</span> {review.name}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="home-rating">
+            <Link to="/reviews">
+              {reviews.summary.average} · {reviews.summary.count.toLocaleString("en-US")} Ratings &amp; Reviews
+            </Link>
+          </p>
         </div>
       </section>
       <section className="faq-section">
