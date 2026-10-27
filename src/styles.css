@@ -27,6 +27,12 @@ img, video, svg {
   height: auto;
 }
 
+.logo-lakewood {
+  width: 492px;
+  max-width: 100%;
+  height: auto;
+}
+
 a { color: var(--teal-dark); }
 
 h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {

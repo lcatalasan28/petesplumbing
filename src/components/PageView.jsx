@@ -23,6 +23,13 @@ const SERVICE_ICONS = [
   "/images/icon-faucet.svg",
 ];
 
+const EAGER_IMAGES = new Set([
+  "/images/petes-plumbing-logo-nfib-800w.png",
+  "/images/petes-plumbing-logo-phcc01-800w.png",
+]);
+
+const LAKEWOOD_LOGO = "/images/petes-plumbing-logo-lakewood-chamber-of-commerce.png";
+
 function Rich({ block }) {
   const parts = block.parts?.length ? block.parts : [{ text: block.text }];
   return (
@@ -449,8 +456,20 @@ function Block({ block, page }) {
           {block.text}
         </a>
       );
-    case "image":
-      return <img src={asset(block.src)} alt={block.alt || ""} loading="lazy" decoding="async" />;
+    case "image": {
+      const lakewood = block.src === LAKEWOOD_LOGO;
+      return (
+        <img
+          src={asset(block.src)}
+          alt={block.alt || ""}
+          className={lakewood ? "logo-lakewood" : undefined}
+          width={lakewood ? 492 : undefined}
+          height={lakewood ? 492 : undefined}
+          loading={EAGER_IMAGES.has(block.src) ? "eager" : "lazy"}
+          decoding="async"
+        />
+      );
+    }
     case "form":
       return <LeadForm variant={block.variant} fields={block.fields} page={page.route} />;
     case "faq":
@@ -467,9 +486,16 @@ function Block({ block, page }) {
     case "posts":
       return (
         <ul className="post-list">
-          {block.items.map((post) => (
+          {block.items.map((post, index) => (
             <li key={post.href || post.title}>
-              {POST_IMAGES[post.href] ? <img src={asset(POST_IMAGES[post.href])} alt="" loading="lazy" decoding="async" /> : null}
+              {POST_IMAGES[post.href] ? (
+                <img
+                  src={asset(POST_IMAGES[post.href])}
+                  alt=""
+                  loading={page.route === "/blog/" && index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              ) : null}
               <h3>
                 <Link to={routePath(post.href)}>{post.title}</Link>
               </h3>

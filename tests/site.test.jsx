@@ -264,6 +264,31 @@ describe("demo shell", () => {
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
   });
 
+  it("keeps the top affiliation logos and the first blog image eager", () => {
+    renderAt("/affiliations-and-credentials");
+    for (const name of ["petes-plumbing-logo-phcc01-800w.png", "petes-plumbing-logo-nfib-800w.png"]) {
+      const img = document.querySelector(`img[src$="${name}"]`);
+      expect(img).toBeTruthy();
+      expect(img).not.toHaveAttribute("loading", "lazy");
+    }
+    const lakewood = document.querySelector('img[src$="petes-plumbing-logo-lakewood-chamber-of-commerce.png"]');
+    expect(lakewood).toHaveAttribute("width", "492");
+    expect(lakewood).toHaveAttribute("height", "492");
+    expect(lakewood).toHaveClass("logo-lakewood");
+    const logo = readFileSync("public/images/petes-plumbing-logo-lakewood-chamber-of-commerce.png");
+    expect(logo.readUInt32BE(16)).toBeGreaterThanOrEqual(492);
+    expect(logo.readUInt32BE(20)).toBeGreaterThanOrEqual(492);
+    cleanup();
+    renderAt("/blog");
+    const blogImages = [...document.querySelectorAll(".post-list img")];
+    expect(blogImages.length).toBeGreaterThan(1);
+    expect(blogImages[0]).not.toHaveAttribute("loading", "lazy");
+    for (const img of blogImages.slice(1)) expect(img).toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/");
+    expect(document.querySelector(".post-list img")).toHaveAttribute("loading", "lazy");
+  });
+
   it("lazy-loads images below the fold and keeps the header logo eager", () => {
     renderAt("/");
     expect(document.querySelector(".logo-link img")).toHaveAttribute("loading", "eager");
