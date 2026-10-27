@@ -310,7 +310,11 @@ function Footer() {
           </section>
           <section>
             <h2>CONTACT US</h2>
-            <p>
+            <p className="footer-nap">
+              <strong>{footer.name}</strong>
+              <br />
+              {footer.address}
+              <br />
               <a href={footer.phoneHref}>{footer.phone}</a>
             </p>
             <p>

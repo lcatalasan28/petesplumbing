@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -262,6 +262,38 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("gives every page one H1, a unique title, and a unique description", () => {
+    const titles = new Set();
+    const descriptions = new Set();
+    for (const page of pages) {
+      titles.add(page.title);
+      descriptions.add(page.description);
+      const h1 = page.blocks.filter((block) => block.type === "heading" && block.level === 1);
+      expect(h1).toHaveLength(1);
+    }
+    expect(titles.size).toBe(pages.length);
+    expect(descriptions.size).toBe(pages.length);
+    const lakewood = pages.find((page) => page.route.endsWith("/lakewood-ca/"));
+    expect(lakewood.title).toBe("Best Local Plumber in Lakewood, CA | Pete's Plumbing");
+    expect(lakewood.blocks.find((block) => block.type === "heading" && block.level === 1).text).toBe(
+      "Best Local Plumber in Lakewood, CA",
+    );
+    const post = pages.find((page) => page.route === "/how-local-plumbers-can-save-you-money/");
+    expect(post.blocks.find((block) => block.type === "heading" && block.level === 1).text).toBe(
+      "How Local Plumbers Can Save You Money",
+    );
+    renderAt("/contact/best-local-plumber-service-area/lakewood-ca");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(document.title).toBe("Best Local Plumber in Lakewood, CA | Pete's Plumbing");
+    expect(document.querySelector('meta[name="description"]').getAttribute("content")).toContain(
+      "Best Local Plumber in Lakewood, CA",
+    );
+    const nap = document.querySelector(".footer-nap");
+    expect(nap).toHaveTextContent("Pete's Plumbing");
+    expect(nap).toHaveTextContent("3099 E Pacific Coast Hwy, Signal Hill, CA 90755");
+    expect(nap).toHaveTextContent("(562) 599-0106");
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
