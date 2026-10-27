@@ -293,6 +293,12 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 
 .btn-orange { background: var(--orange); color: #fff; }
 
+.btn-outline {
+  background: #fff;
+  color: var(--teal-dark);
+  border-color: var(--teal);
+}
+
 .hero {
   background-color: #163e46;
   background-size: cover;
@@ -365,6 +371,32 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 }
 
 .page-body img, .why-panel img, .service-card img { border-radius: 0; }
+
+.not-found-body { padding: 1.25rem 0 1.5rem; }
+
+.not-found-body p { margin: 0; }
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.not-found-actions .btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.not-found-actions .btn-outline {
+  background: #fff;
+  color: var(--teal-dark);
+  border-color: var(--teal);
+}
 
 .link-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
@@ -864,6 +896,8 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
   }
 
   .page-banner h4 { font-size: 19px; }
+  .not-found-actions { flex-direction: column; align-items: stretch; }
+  .not-found-actions .btn { width: 100%; }
   .services-menu > .submenu { columns: auto; width: auto; max-width: none; max-height: none; }
   .site-nav:not(.open) { display: none; }
   .site-nav.open { display: block; }

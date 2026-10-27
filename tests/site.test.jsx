@@ -62,16 +62,26 @@ describe("demo shell", () => {
       expect(sources.has(`${bare}/`)).toBe(true);
     }
     expect(sources.size).toBe((routes.length - 1) * 2);
-    const missing = readFileSync("public/404.html", "utf8");
-    expect(missing).toMatch(/name="robots"\s+content="noindex"/);
-    expect(missing).toContain("Page not found");
-    expect(missing).toContain("Demo site");
+    const shell = readFileSync("index.html", "utf8");
+    const config = readFileSync("vite.config.js", "utf8");
+    expect(shell).toMatch(/name="robots"\s+content="noindex"/);
+    expect(config).toContain('copyFileSync(resolve(outDir, "index.html"), resolve(outDir, "404.html"))');
   });
 
-  it("shows the demo notice when the path is unknown", () => {
+  it("shows the designed not-found page inside the site shell", () => {
     renderAt("/not-a-real-page");
     expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
-    expect(screen.getByRole("heading", { level: 1, name: "Page not found" })).toBeInTheDocument();
+    expect(document.querySelector(".site-header")).toBeTruthy();
+    expect(document.querySelector(".site-footer")).toBeTruthy();
+    const article = screen.getByRole("article");
+    const banner = article.querySelector(".page-banner");
+    expect(banner).toBeTruthy();
+    expect(within(banner).getByRole("heading", { level: 1, name: "Page not found" })).toBeInTheDocument();
+    expect(within(article).getByText("That page is not on this demo.")).toBeInTheDocument();
+    expect(within(article).getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
+    expect(within(article).getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
+    expect(within(article).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
+    expect(document.title).toBe("Page not found");
   });
 
   it("keeps the live copy, fixes the lumbing typo, and drops placeholder lorem", () => {
