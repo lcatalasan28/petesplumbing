@@ -16,7 +16,7 @@ export function App() {
       document.title = "Thank you for contacting us.";
       return;
     }
-    document.title = page?.title || "Pete's Plumbing";
+    document.title = page?.title || "Page not found";
   }, [page, route]);
 
   let body;
