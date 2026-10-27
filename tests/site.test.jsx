@@ -273,11 +273,10 @@ describe("demo shell", () => {
     renderAt("/");
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(homeH1);
-    expect(
-      screen.getByText(
-        "Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of experience. CA License #277178.",
-      ),
-    ).toBeInTheDocument();
+    const subhead = screen.getByText(
+      "Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of experience. CA License #277178.",
+    );
+    expect(subhead.textContent).toContain("License\u00A0#277178");
     expect(screen.getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
     expect(screen.getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
     const header = document.querySelector(".rating-link");

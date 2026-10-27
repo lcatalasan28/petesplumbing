@@ -104,7 +104,7 @@ function HomeHero({ page, form }) {
             </h1>
             <p>
               Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of
-              experience. CA License #277178.
+              experience. CA License{"\u00A0"}#277178.
             </p>
             <div className="home-hero-ctas">
               <Link className="btn btn-orange" to="/request-estimate">
