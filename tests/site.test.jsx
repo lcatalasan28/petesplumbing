@@ -93,7 +93,34 @@ describe("demo shell", () => {
   it("uses review text from the live widget without inventing quotes", () => {
     renderAt("/reviews");
     expect(screen.getAllByText(/1,184 ratings/).length).toBeGreaterThan(0);
-    expect(screen.getByText(/galvinzed pipes/i)).toBeInTheDocument();
-    expect(reviews.reviews.length).toBeGreaterThan(0);
+    expect(screen.getByText(/Juan and his assistant arrived early/)).toBeInTheDocument();
+    expect(screen.getByText("Noah H")).toBeInTheDocument();
+    expect(screen.queryByText("TONY")).not.toBeInTheDocument();
+    expect(reviews.source).toMatch(/merchants\/58254\/reviews\.json/);
+    expect(reviews.reviews).toHaveLength(10);
+  });
+
+  it("includes the live service FAQ, services menu, and blog teasers", () => {
+    const faucet = pages.find((page) => page.route === "/faucet-repair/");
+    const faq = faucet.blocks.find((block) => block.type === "faq");
+    expect(faq.items).toHaveLength(3);
+    expect(faq.items[0].q).toBe("How can I tell if my faucet needs fixing or replacing?");
+    const hero = pages.filter((page) =>
+      page.blocks.some(
+        (block) =>
+          block.type === "form" &&
+          block.fields?.some((field) =>
+            field.options?.includes("Appliance & Plumbing Installation and Repair"),
+          ),
+      ),
+    );
+    expect(hero.length).toBe(89);
+    const home = pages.find((page) => page.route === "/");
+    const posts = home.blocks.find((block) => block.type === "posts");
+    expect(posts.items[0].date).toBe("August 28, 2026");
+    expect(posts.items[0].excerpt).toMatch(/Not sure how to select the best plumbing contractors/);
+    renderAt("/faucet-repair");
+    expect(screen.getByText("Appliance & Plumbing Installation and Repair")).toBeInTheDocument();
+    expect(screen.getByText(faq.items[0].q)).toBeInTheDocument();
   });
 });

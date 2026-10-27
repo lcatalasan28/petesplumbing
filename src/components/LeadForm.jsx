@@ -88,18 +88,25 @@ export function LeadForm({ variant = "contact", fields, page }) {
         }
 
         if (field.type === "select") {
+          const options = field.options || [];
           return (
             <label key={label} className="field" htmlFor={id}>
-              <span>{label}</span>
-              <select id={id} name={name} required={required} defaultValue="">
-                <option value="" disabled>
-                  {label.replace("*", "")}
-                </option>
-                {(field.options || []).map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
+              {field.hideLabel ? null : <span>{label}</span>}
+              <select
+                id={id}
+                name={name}
+                required={required}
+                defaultValue=""
+                aria-label={field.hideLabel ? label : undefined}
+              >
+                {options.map((option, index) => {
+                  const placeholder = index === 0 && /\*\s*$/.test(option);
+                  return (
+                    <option key={`${option}-${index}`} value={placeholder ? "" : option} disabled={placeholder}>
+                      {option}
+                    </option>
+                  );
+                })}
               </select>
             </label>
           );

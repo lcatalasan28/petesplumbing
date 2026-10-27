@@ -39,19 +39,22 @@ function formatDate(iso) {
   });
 }
 
-function ReviewCards({ items, clamp }) {
+function ReviewCards({ items }) {
   return (
-    <ul className={clamp ? "review-list clamp" : "review-list"}>
-      {items.map((review) => (
-        <li key={`${review.name}-${review.date}`}>
+    <ul className="review-list">
+      {items.map((review, index) => (
+        <li key={`${review.name}-${review.date}-${index}`}>
           <p className="review-meta">
             <span>{review.name}</span>
-            <span>
-              {review.rating} out of 5
-            </span>
-            <time dateTime={review.date}>{formatDate(review.date)}</time>
+            <span>{review.rating} out of 5</span>
+            <time dateTime={review.date}>{review.displayDate || formatDate(review.date)}</time>
           </p>
           <p>{review.comment}</p>
+          {review.reply ? (
+            <p className="review-reply">
+              <span>REPLY FROM THE BUSINESS</span> {review.reply}
+            </p>
+          ) : null}
         </li>
       ))}
     </ul>
@@ -88,9 +91,6 @@ export function PageView({ page }) {
         {rest.map((block, index) => (
           <Fragment key={index}>
             <Block block={block} page={page} />
-            {page.route === "/" && block.type === "rich" && block.text?.includes("leave a review") ? (
-              <ReviewCards items={reviews.reviews.slice(0, 2)} clamp />
-            ) : null}
           </Fragment>
         ))}
         {page.route === "/reviews/" ? (
