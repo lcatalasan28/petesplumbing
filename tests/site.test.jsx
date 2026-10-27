@@ -114,10 +114,31 @@ describe("demo shell", () => {
           ),
       ),
     );
-    expect(hero.length).toBe(89);
+    expect(hero.length).toBe(90);
+    const estimate = pages.find((page) => page.route === "/request-estimate/");
+    const services = estimate.blocks
+      .find((block) => block.type === "form")
+      .fields.find((field) => field.label === "Services*");
+    expect(services.type).toBe("select");
+    expect(services.options).toEqual([
+      "Services*",
+      "Appliance & Plumbing Installation and Repair",
+      "Drains & Pipes",
+      "Gas Line Services",
+      "Specialized Plumbing Services",
+      "Other",
+      "Other",
+    ]);
+    const inspection = pages.find((page) => page.route === "/plumbing-inspection/");
+    const inspectionFaq = inspection.blocks.find((block) => block.type === "faq");
+    expect(inspectionFaq.items.map((item) => item.q)).toEqual([
+      "Why is a plumbing inspection important?",
+      "What are the benefits of a plumbing inspection?",
+      "Will a plumbing inspection disrupt my daily routine?",
+    ]);
     const home = pages.find((page) => page.route === "/");
     const posts = home.blocks.find((block) => block.type === "posts");
-    expect(posts.items[0].date).toBe("August 28, 2026");
+    expect(posts.items.every((item) => !item.date)).toBe(true);
     expect(posts.items[0].excerpt).toMatch(/Not sure how to select the best plumbing contractors/);
     renderAt("/faucet-repair");
     expect(screen.getByText("Appliance & Plumbing Installation and Repair")).toBeInTheDocument();
