@@ -366,6 +366,8 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 
 .page-body img, .why-panel img, .service-card img { border-radius: 0; }
 
+.keep-line { white-space: nowrap; }
+
 .link-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
 .link-cloud a {

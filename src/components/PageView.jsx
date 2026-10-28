@@ -29,7 +29,13 @@ function Rich({ block }) {
     <p>
       {parts.map((part, index) => {
         const content = part.strong ? <strong>{part.text}</strong> : part.text;
-        if (!part.href) return <span key={index}>{content}</span>;
+        if (!part.href) {
+          return (
+            <span key={index} className={part.nowrap ? "keep-line" : undefined}>
+              {content}
+            </span>
+          );
+        }
         if (part.href.startsWith("/") && !part.href.startsWith("//")) {
           const [path, hash] = part.href.split("#");
           return (

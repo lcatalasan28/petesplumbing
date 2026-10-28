@@ -267,11 +267,13 @@ describe("demo shell", () => {
   it("tells the About story with facts already on the site", () => {
     renderAt("/about");
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-    const story = screen.getByText(/provides residential and commercial plumbing in Greater Long Beach and Lakewood, CA/);
-    expect(story).toHaveTextContent("established in 1972");
-    expect(story).toHaveTextContent("3099 E Pacific Coast Hwy, Signal Hill, CA 90755");
-    expect(story).toHaveTextContent("(562) 599-0106");
-    expect(story).toHaveTextContent("CSLB License #277178");
+    const story = screen.getByText(/has provided residential and commercial plumbing/).closest("p");
+    expect(story).toHaveTextContent(
+      "Pete's Plumbing has provided residential and commercial plumbing in Greater Long Beach and Lakewood, CA since 1972. Call (562) 599-0106. CSLB License #277178.",
+    );
+    expect(story).not.toHaveTextContent("The shop is at");
+    expect(story).not.toHaveTextContent("3099 E Pacific Coast Hwy");
+    expect(story.querySelector(".keep-line")).toHaveTextContent("CSLB License #277178.");
     expect(story.textContent).not.toMatch(/24\/7|Google|BBB|over 50 years|fee/i);
     expect(screen.getByText("Residential Plumbing")).toBeInTheDocument();
     expect(screen.getByText("1972")).toBeInTheDocument();
