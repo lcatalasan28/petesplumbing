@@ -276,6 +276,12 @@ describe("demo shell", () => {
       expect(item.querySelector("blockquote").textContent.trim().startsWith("“")).toBe(true);
       expect(item.querySelector("blockquote").textContent.trim().endsWith("”")).toBe(true);
     }
+    const reviewLink = within(quote).getByRole("link", { name: "leave a review" });
+    expect(reviewLink).toHaveAttribute("href", "/reviews");
+    const css = readFileSync("src/styles.css", "utf8");
+    expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*color:\s*#fff/);
+    expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*text-decoration:\s*underline/);
+    expect(css).toMatch(/\.quote-card > p a:focus-visible\s*\{[^}]*outline:\s*3px solid #fff/);
     const rating = within(quote).getByRole("link", { name: /4\.8 · 1,184 Ratings & Reviews/ });
     expect(rating).toHaveAttribute("href", "/reviews");
     const header = document.querySelector(".rating-link");

@@ -531,6 +531,17 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 
 .quote-card h2 { color: #fff; }
 
+.quote-card > p a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.quote-card > p a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
 .hero-license {
   margin: 0.75rem 0 0;
   font-weight: 700;
