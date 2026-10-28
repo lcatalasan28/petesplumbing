@@ -23,13 +23,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.5.0 in package.json and version.json", () => {
+  it("keeps version 1.6.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.5.0");
-    expect(version.version).toBe("1.5.0");
-    expect(published.version).toBe("1.5.0");
+    expect(pkg.version).toBe("1.6.0");
+    expect(version.version).toBe("1.6.0");
+    expect(published.version).toBe("1.6.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -304,6 +304,24 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("tells the About story with facts already on the site", () => {
+    renderAt("/about");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    const story = screen.getByText(/has provided residential and commercial plumbing/).closest("p");
+    expect(story).toHaveTextContent(
+      "Pete's Plumbing has provided residential and commercial plumbing in Greater Long Beach and Lakewood, CA since 1972. Call (562) 599-0106. CSLB License #277178.",
+    );
+    expect(story).not.toHaveTextContent("The shop is at");
+    expect(story).not.toHaveTextContent("3099 E Pacific Coast Hwy");
+    const phone = within(story).getByRole("link", { name: "(562) 599-0106" });
+    expect(phone).toHaveAttribute("href", "tel:+15625990106");
+    expect(phone).toHaveClass("keep-line");
+    expect(story.querySelectorAll(".keep-line")[1]).toHaveTextContent("CSLB License #277178.");
+    expect(story.textContent).not.toMatch(/24\/7|Google|BBB|over 50 years|fee/i);
+    expect(screen.getByText("Residential Plumbing")).toBeInTheDocument();
+    expect(screen.getByText("1972")).toBeInTheDocument();
   });
 
   it("features existing review quotes and the license near the home actions", () => {

@@ -378,6 +378,8 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 
 .page-body img, .why-panel img, .service-card img { border-radius: 0; }
 
+.keep-line { white-space: nowrap; }
+
 .not-found-body { padding: 1.25rem 0 1.5rem; }
 
 .not-found-body p { margin: 0; }

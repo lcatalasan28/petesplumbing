@@ -36,17 +36,24 @@ function Rich({ block }) {
     <p>
       {parts.map((part, index) => {
         const content = part.strong ? <strong>{part.text}</strong> : part.text;
-        if (!part.href) return <span key={index}>{content}</span>;
+        if (!part.href) {
+          return (
+            <span key={index} className={part.nowrap ? "keep-line" : undefined}>
+              {content}
+            </span>
+          );
+        }
+        const className = part.nowrap ? "keep-line" : undefined;
         if (part.href.startsWith("/") && !part.href.startsWith("//")) {
           const [path, hash] = part.href.split("#");
           return (
-            <Link key={index} to={`${routePath(path)}${hash ? `#${hash}` : ""}`}>
+            <Link key={index} className={className} to={`${routePath(path)}${hash ? `#${hash}` : ""}`}>
               {content}
             </Link>
           );
         }
         return (
-          <a key={index} href={part.href}>
+          <a key={index} className={className} href={part.href}>
             {content}
           </a>
         );
