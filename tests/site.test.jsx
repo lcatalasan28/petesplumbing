@@ -9,7 +9,10 @@ import reviews from "../src/data/reviews.json";
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  document.cookie = "demo_cookie_notice=; path=/; max-age=0";
 });
+
+const homeH1 = `Long Beach's Trusted Plumbers, Rated ${reviews.summary.average} by ${reviews.summary.count.toLocaleString("en-US")} Customers`;
 
 function renderAt(path) {
   return render(
@@ -20,13 +23,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.1.0 in package.json and version.json", () => {
+  it("keeps version 1.5.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.1.0");
-    expect(version.version).toBe("1.1.0");
-    expect(published.version).toBe("1.1.0");
+    expect(pkg.version).toBe("1.5.0");
+    expect(version.version).toBe("1.5.0");
+    expect(published.version).toBe("1.5.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -48,13 +51,51 @@ describe("demo shell", () => {
     expect(pages).toHaveLength(sitemapPaths.length);
   });
 
-  it("keeps the live copy, including the lumbing typo, and drops placeholder lorem", () => {
+  it("rewrites only known routes and keeps a real 404 page", () => {
+    const vercel = JSON.parse(readFileSync("vercel.json", "utf8"));
+    const sources = new Set(vercel.rewrites.map((rule) => rule.source));
+    expect(vercel.rewrites.every((rule) => rule.destination === "/index.html")).toBe(true);
+    for (const rule of vercel.rewrites) {
+      expect(rule.source).not.toMatch(/[()*+?:]/);
+    }
+    for (const route of routes) {
+      if (route.route === "/") continue;
+      const bare = route.route.replace(/\/$/, "");
+      expect(sources.has(bare)).toBe(true);
+      expect(sources.has(`${bare}/`)).toBe(true);
+    }
+    expect(sources.size).toBe((routes.length - 1) * 2);
+    const shell = readFileSync("index.html", "utf8");
+    const config = readFileSync("vite.config.js", "utf8");
+    expect(shell).toMatch(/name="robots"\s+content="noindex"/);
+    expect(config).toContain('copyFileSync(resolve(outDir, "index.html"), resolve(outDir, "404.html"))');
+  });
+
+  it("shows the designed not-found page inside the site shell", () => {
+    renderAt("/not-a-real-page");
+    expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
+    expect(document.querySelector(".site-header")).toBeTruthy();
+    expect(document.querySelector(".site-footer")).toBeTruthy();
+    const article = screen.getByRole("article");
+    const banner = article.querySelector(".page-banner");
+    expect(banner).toBeTruthy();
+    expect(within(banner).getByRole("heading", { level: 1, name: "Page not found" })).toBeInTheDocument();
+    expect(within(article).getByText("That page is not on this demo.")).toBeInTheDocument();
+    expect(within(article).getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
+    expect(within(article).getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
+    expect(within(article).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
+    expect(document.title).toBe("Page not found");
+  });
+
+  it("keeps the live copy, fixes the lumbing typo, and drops placeholder lorem", () => {
     const blob = JSON.stringify(pages).toLowerCase();
     expect(blob).not.toContain("lorem");
     expect(blob).not.toContain("request lorem");
     expect(blob).not.toContain("bullet text");
     expect(blob).not.toContain("title or question");
-    expect(footer.transcript).toContain("and lumbing");
+    expect(blob).not.toMatch(/[^p]lumbing/);
+    expect(footer.transcript).toContain("appliance and plumbing installation");
+    expect(footer.transcript).not.toMatch(/[^p]lumbing/i);
     expect(blob).toContain("professional plumbing services");
     expect(blob).toContain("3099 e pacific coast hwy");
   });
@@ -62,8 +103,9 @@ describe("demo shell", () => {
   it("shows the demo notice, home copy, and a working menu", () => {
     renderAt("/");
     expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
-    expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
-    expect(screen.getByText(/and lumbing/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: homeH1 })).toBeInTheDocument();
+    expect(screen.getByText(/appliance and plumbing installation/)).toBeInTheDocument();
+    expect(screen.getByText(/appliance and plumbing installation/).textContent).not.toMatch(/[^p]lumbing/i);
     const menu = screen.getByRole("button", { name: "Menu" });
     expect(menu).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(menu);
@@ -187,12 +229,12 @@ describe("demo shell", () => {
       fireEvent.touchStart(link);
       fireEvent.click(link);
       expect(link.closest(".nav-item")).toHaveClass("touch-open");
-      expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 1, name: homeH1 })).toBeInTheDocument();
     }
     const contact = nav.getByRole("link", { name: (name) => name.trim() === "Contact" });
     fireEvent.touchStart(contact);
     fireEvent.click(contact);
-    expect(screen.queryByRole("heading", { level: 1, name: "Professional Plumbing Services" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 1, name: homeH1 })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: "Contact" })).toBeInTheDocument();
   });
 
@@ -282,13 +324,51 @@ describe("demo shell", () => {
     expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*color:\s*#fff/);
     expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*text-decoration:\s*underline/);
     expect(css).toMatch(/\.quote-card > p a:focus-visible\s*\{[^}]*outline:\s*3px solid #fff/);
-    const rating = within(quote).getByRole("link", { name: /4\.8 · 1,184 Ratings & Reviews/ });
-    expect(rating).toHaveAttribute("href", "/reviews");
+    expect(css).not.toMatch(/\.hero-license|\.home-rating/);
+    expect(document.querySelector(".hero-license")).toBeNull();
+    expect(document.querySelector(".home-rating")).toBeNull();
+    expect(screen.getAllByText("Licensed · CSLB #277178")).toHaveLength(1);
     const header = document.querySelector(".rating-link");
     expect(header).toHaveAttribute("href", "/reviews");
     expect(header).toHaveTextContent("4.8");
     expect(header).toHaveTextContent("1,184");
-    expect(document.querySelector(".hero-license")).toHaveTextContent("CSLB #277178");
+  });
+
+  it("builds the home hero from the header rating and keeps the estimate form", async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    renderAt("/");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(homeH1);
+    const subhead = screen.getByText(
+      "Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of experience. CA License #277178.",
+    );
+    expect(subhead.textContent).toContain("License\u00A0#277178");
+    expect(screen.getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
+    expect(screen.getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
+    const header = document.querySelector(".rating-link");
+    const trust = document.querySelector(".home-hero-trust a");
+    expect(header).toHaveTextContent(String(reviews.summary.average));
+    expect(header).toHaveTextContent(reviews.summary.count.toLocaleString("en-US"));
+    expect(trust).toHaveAttribute("href", "/reviews");
+    expect(trust).toHaveTextContent(`${reviews.summary.average} · ${reviews.summary.count.toLocaleString("en-US")} Ratings & Reviews`);
+    expect(screen.getByText("Licensed · CSLB #277178")).toBeInTheDocument();
+    const hero = document.querySelector(".home-hero").textContent;
+    for (const word of ["Google", "Yelp", "24/7", "hours", "$", "fee", "BBB"]) {
+      expect(hero.toLowerCase()).not.toContain(word.toLowerCase());
+    }
+    expect(document.querySelector(".home-hero-photo").getAttribute("src")).toContain("petes-plumbing-hero-home-800w.jpg");
+    const notice = screen.getByRole("region", { name: "Cookie notice" });
+    expect(notice).toBeInTheDocument();
+    fireEvent.click(within(notice).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("region", { name: "Cookie notice" })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Name:"), { target: { value: "Ada Lovelace" } });
+    fireEvent.change(screen.getByLabelText("Phone:"), { target: { value: "5625550100" } });
+    fireEvent.change(screen.getByLabelText("Email:"), { target: { value: "ada@example.com" } });
+    fireEvent.change(screen.getByLabelText("Services"), { target: { value: "Drains & Pipes" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    expect(await screen.findByRole("heading", { name: /thank you for contacting us/i })).toBeInTheDocument();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
