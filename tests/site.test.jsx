@@ -273,7 +273,10 @@ describe("demo shell", () => {
     );
     expect(story).not.toHaveTextContent("The shop is at");
     expect(story).not.toHaveTextContent("3099 E Pacific Coast Hwy");
-    expect(story.querySelector(".keep-line")).toHaveTextContent("CSLB License #277178.");
+    const phone = within(story).getByRole("link", { name: "(562) 599-0106" });
+    expect(phone).toHaveAttribute("href", "tel:+15625990106");
+    expect(phone).toHaveClass("keep-line");
+    expect(story.querySelectorAll(".keep-line")[1]).toHaveTextContent("CSLB License #277178.");
     expect(story.textContent).not.toMatch(/24\/7|Google|BBB|over 50 years|fee/i);
     expect(screen.getByText("Residential Plumbing")).toBeInTheDocument();
     expect(screen.getByText("1972")).toBeInTheDocument();
