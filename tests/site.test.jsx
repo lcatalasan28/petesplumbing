@@ -9,7 +9,10 @@ import reviews from "../src/data/reviews.json";
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  document.cookie = "demo_cookie_notice=; path=/; max-age=0";
 });
+
+const homeH1 = `Long Beach's Trusted Plumbers, Rated ${reviews.summary.average} by ${reviews.summary.count.toLocaleString("en-US")} Customers`;
 
 function renderAt(path) {
   return render(
@@ -20,13 +23,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.1 in package.json and version.json", () => {
+  it("keeps version 1.1.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.1");
-    expect(version.version).toBe("1.0.1");
-    expect(published.version).toBe("1.0.1");
+    expect(pkg.version).toBe("1.1.0");
+    expect(version.version).toBe("1.1.0");
+    expect(published.version).toBe("1.1.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -100,7 +103,7 @@ describe("demo shell", () => {
   it("shows the demo notice, home copy, and a working menu", () => {
     renderAt("/");
     expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
-    expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: homeH1 })).toBeInTheDocument();
     expect(screen.getByText(/appliance and plumbing installation/)).toBeInTheDocument();
     expect(screen.getByText(/appliance and plumbing installation/).textContent).not.toMatch(/[^p]lumbing/i);
     const menu = screen.getByRole("button", { name: "Menu" });
@@ -226,12 +229,12 @@ describe("demo shell", () => {
       fireEvent.touchStart(link);
       fireEvent.click(link);
       expect(link.closest(".nav-item")).toHaveClass("touch-open");
-      expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 1, name: homeH1 })).toBeInTheDocument();
     }
     const contact = nav.getByRole("link", { name: (name) => name.trim() === "Contact" });
     fireEvent.touchStart(contact);
     fireEvent.click(contact);
-    expect(screen.queryByRole("heading", { level: 1, name: "Professional Plumbing Services" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 1, name: homeH1 })).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: "Contact" })).toBeInTheDocument();
   });
 
@@ -301,6 +304,43 @@ describe("demo shell", () => {
     const heading = within(card).getByRole("heading", { name: "Professional Plumbing You Can Rely On" });
     expect(logo.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
+  });
+
+  it("builds the home hero from the header rating and keeps the estimate form", async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+    renderAt("/");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(homeH1);
+    const subhead = screen.getByText(
+      "Repairs, water heaters, leak detection and drain service from a licensed local team with over 50 years of experience. CA License #277178.",
+    );
+    expect(subhead.textContent).toContain("License\u00A0#277178");
+    expect(screen.getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
+    expect(screen.getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
+    const header = document.querySelector(".rating-link");
+    const trust = document.querySelector(".home-hero-trust a");
+    expect(header).toHaveTextContent(String(reviews.summary.average));
+    expect(header).toHaveTextContent(String(reviews.summary.count));
+    expect(trust).toHaveAttribute("href", "/reviews");
+    expect(trust).toHaveTextContent(`${reviews.summary.average} · ${reviews.summary.count.toLocaleString("en-US")} Ratings & Reviews`);
+    expect(screen.getByText("Licensed · CSLB #277178")).toBeInTheDocument();
+    const hero = document.querySelector(".home-hero").textContent;
+    for (const word of ["Google", "Yelp", "24/7", "hours", "$", "fee", "BBB"]) {
+      expect(hero.toLowerCase()).not.toContain(word.toLowerCase());
+    }
+    expect(document.querySelector(".home-hero-photo").getAttribute("src")).toContain("petes-plumbing-hero-home-800w.jpg");
+    const notice = screen.getByRole("region", { name: "Cookie notice" });
+    expect(notice).toBeInTheDocument();
+    fireEvent.click(within(notice).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("region", { name: "Cookie notice" })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Name:"), { target: { value: "Ada Lovelace" } });
+    fireEvent.change(screen.getByLabelText("Phone:"), { target: { value: "5625550100" } });
+    fireEvent.change(screen.getByLabelText("Email:"), { target: { value: "ada@example.com" } });
+    fireEvent.change(screen.getByLabelText("Services"), { target: { value: "Drains & Pipes" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    expect(await screen.findByRole("heading", { name: /thank you for contacting us/i })).toBeInTheDocument();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it("restores Home on the breadcrumbs that were missing it", () => {
