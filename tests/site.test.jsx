@@ -20,13 +20,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.0.0 in package.json and version.json", () => {
+  it("keeps version 1.0.1 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.0.0");
-    expect(version.version).toBe("1.0.0");
-    expect(published.version).toBe("1.0.0");
+    expect(pkg.version).toBe("1.0.1");
+    expect(version.version).toBe("1.0.1");
+    expect(published.version).toBe("1.0.1");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -48,13 +48,51 @@ describe("demo shell", () => {
     expect(pages).toHaveLength(sitemapPaths.length);
   });
 
-  it("keeps the live copy, including the lumbing typo, and drops placeholder lorem", () => {
+  it("rewrites only known routes and keeps a real 404 page", () => {
+    const vercel = JSON.parse(readFileSync("vercel.json", "utf8"));
+    const sources = new Set(vercel.rewrites.map((rule) => rule.source));
+    expect(vercel.rewrites.every((rule) => rule.destination === "/index.html")).toBe(true);
+    for (const rule of vercel.rewrites) {
+      expect(rule.source).not.toMatch(/[()*+?:]/);
+    }
+    for (const route of routes) {
+      if (route.route === "/") continue;
+      const bare = route.route.replace(/\/$/, "");
+      expect(sources.has(bare)).toBe(true);
+      expect(sources.has(`${bare}/`)).toBe(true);
+    }
+    expect(sources.size).toBe((routes.length - 1) * 2);
+    const shell = readFileSync("index.html", "utf8");
+    const config = readFileSync("vite.config.js", "utf8");
+    expect(shell).toMatch(/name="robots"\s+content="noindex"/);
+    expect(config).toContain('copyFileSync(resolve(outDir, "index.html"), resolve(outDir, "404.html"))');
+  });
+
+  it("shows the designed not-found page inside the site shell", () => {
+    renderAt("/not-a-real-page");
+    expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
+    expect(document.querySelector(".site-header")).toBeTruthy();
+    expect(document.querySelector(".site-footer")).toBeTruthy();
+    const article = screen.getByRole("article");
+    const banner = article.querySelector(".page-banner");
+    expect(banner).toBeTruthy();
+    expect(within(banner).getByRole("heading", { level: 1, name: "Page not found" })).toBeInTheDocument();
+    expect(within(article).getByText("That page is not on this demo.")).toBeInTheDocument();
+    expect(within(article).getByRole("link", { name: "Request an Estimate" })).toHaveAttribute("href", "/request-estimate");
+    expect(within(article).getByRole("link", { name: "Call (562) 599-0106" })).toHaveAttribute("href", "tel:+15625990106");
+    expect(within(article).getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
+    expect(document.title).toBe("Page not found");
+  });
+
+  it("keeps the live copy, fixes the lumbing typo, and drops placeholder lorem", () => {
     const blob = JSON.stringify(pages).toLowerCase();
     expect(blob).not.toContain("lorem");
     expect(blob).not.toContain("request lorem");
     expect(blob).not.toContain("bullet text");
     expect(blob).not.toContain("title or question");
-    expect(footer.transcript).toContain("and lumbing");
+    expect(blob).not.toMatch(/[^p]lumbing/);
+    expect(footer.transcript).toContain("appliance and plumbing installation");
+    expect(footer.transcript).not.toMatch(/[^p]lumbing/i);
     expect(blob).toContain("professional plumbing services");
     expect(blob).toContain("3099 e pacific coast hwy");
   });
@@ -63,7 +101,8 @@ describe("demo shell", () => {
     renderAt("/");
     expect(screen.getByRole("note")).toHaveTextContent(/demo site/i);
     expect(screen.getByRole("heading", { level: 1, name: "Professional Plumbing Services" })).toBeInTheDocument();
-    expect(screen.getByText(/and lumbing/)).toBeInTheDocument();
+    expect(screen.getByText(/appliance and plumbing installation/)).toBeInTheDocument();
+    expect(screen.getByText(/appliance and plumbing installation/).textContent).not.toMatch(/[^p]lumbing/i);
     const menu = screen.getByRole("button", { name: "Menu" });
     expect(menu).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(menu);
