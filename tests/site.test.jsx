@@ -270,6 +270,12 @@ describe("demo shell", () => {
     expect(quote).toHaveTextContent("Juan and his assistant arrived early");
     expect(quote).toHaveTextContent("Noah H");
     expect(quote).not.toHaveTextContent("Google");
+    const quotes = [...quote.querySelectorAll(".home-quotes li")];
+    expect(quotes).toHaveLength(3);
+    for (const item of quotes) {
+      expect(item.querySelector("blockquote").textContent.trim().startsWith("“")).toBe(true);
+      expect(item.querySelector("blockquote").textContent.trim().endsWith("”")).toBe(true);
+    }
     const rating = within(quote).getByRole("link", { name: /4\.8 · 1,184 Ratings & Reviews/ });
     expect(rating).toHaveAttribute("href", "/reviews");
     const header = document.querySelector(".rating-link");

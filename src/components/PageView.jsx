@@ -390,7 +390,7 @@ function HomeRest({ blocks, page }) {
           <ul className="home-quotes">
             {reviews.reviews.slice(0, 3).map((review) => (
               <li key={`${review.name}-${review.date}`}>
-                <blockquote>{review.comment}</blockquote>
+                <blockquote>“{review.comment}”</blockquote>
                 <p>
                   <span className="stars" aria-hidden="true">★★★★★</span> {review.name}
                 </p>
