@@ -13,7 +13,835 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/4-signs-it-s-time-to-call-a-local-plumber-for-help",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/4-signs-it-s-time-to-call-a-local-plumber-for-help/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/about/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/affiliations-and-credentials",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/affiliations-and-credentials/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/backflow-testing",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/backflow-testing/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/capability-statement",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/capability-statement/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/clogged-drain-cleaning",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/clogged-drain-cleaning/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/artesia-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/artesia-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bell-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bell-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bell-gardens-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bell-gardens-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bellflower-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/bellflower-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/buena-park-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/buena-park-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/carson-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/carson-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cerritos-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cerritos-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/compton-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/compton-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cudahy-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cudahy-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cypress-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/cypress-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/downey-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/downey-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/east-la-mirada-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/east-la-mirada-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/florence-graham-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/florence-graham-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/garden-grove-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/garden-grove-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/gardena-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/gardena-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/harbor-city-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/harbor-city-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hawaiian-gardens-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hawaiian-gardens-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hawthorne-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hawthorne-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hermosa-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/hermosa-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/huntington-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/huntington-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/huntington-park-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/huntington-park-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/la-mirada-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/la-mirada-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/la-palma-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/la-palma-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lakewood-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lakewood-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lawndale-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lawndale-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lomita-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lomita-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/long-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/long-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/los-alamitos-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/los-alamitos-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lynwood-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/lynwood-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/maywood-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/maywood-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/midway-city-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/midway-city-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/norwalk-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/norwalk-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/palos-verdes-estates-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/palos-verdes-estates-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/palos-verdes-peninsula-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/palos-verdes-peninsula-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/paramount-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/paramount-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/pico-rivera-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/pico-rivera-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/redondo-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/redondo-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/rolling-hills-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/rolling-hills-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/rolling-hills-estates-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/rolling-hills-estates-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/san-pedro-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/san-pedro-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/santa-fe-springs-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/santa-fe-springs-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/seal-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/seal-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/signal-hill-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/signal-hill-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/south-gate-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/south-gate-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/south-whittier-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/south-whittier-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/stanton-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/stanton-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/sunset-beach-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/sunset-beach-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/torrance-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/torrance-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-athens-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-athens-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-carson-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-carson-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-rancho-dominguez-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/west-rancho-dominguez-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/westminster-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/westminster-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/westmont-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/westmont-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/willowbrook-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/willowbrook-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/wilmington-ca",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact/best-local-plumber-service-area/wilmington-ca/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dishwasher-change-out",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dishwasher-change-out/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/drains-and-pipes",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/drains-and-pipes/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/emergency-pipe-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/emergency-pipe-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/emergency-plumbing-service",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/emergency-plumbing-service/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faqs",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faqs/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faucet-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faucet-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faucet-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/faucet-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/garbage-disposal-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/garbage-disposal-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/gas-line-services/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/helpful-tips",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/helpful-tips/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/how-local-plumbers-can-save-you-money",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/how-local-plumbers-can-save-you-money/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/kitchen-plumbing",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/kitchen-plumbing/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/leak-detection",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/leak-detection/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pipe-insulation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pipe-insulation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pipe-replacement",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pipe-replacement/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/plumbing-inspection",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/plumbing-inspection/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/plumbing-installation-and-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/plumbing-installation-and-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/re-piping-services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/re-piping-services/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/request-estimate",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/request-estimate/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/reviews",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/reviews/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/service-area",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/service-area/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sewer-line-cleaning",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sewer-line-cleaning/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sewer-line-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sewer-line-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/shower-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/shower-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sink-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sink-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sink-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/sink-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/specialized-plumbing-services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/specialized-plumbing-services/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tankless-water-heater-services/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/thank-you",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/thank-you/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/the-benefits-of-hiring-a-plumbing-contractor",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/the-benefits-of-hiring-a-plumbing-contractor/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/toilet-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/toilet-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/toilet-repair",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/toilet-repair/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tub-shower-valve-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/tub-shower-valve-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/water-filtration-system",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/water-filtration-system/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/water-heater-installation",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/water-heater-installation/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/what-to-look-for-when-choosing-plumbing-contractors",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/what-to-look-for-when-choosing-plumbing-contractors/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/why-the-best-local-plumbers-recommend-water-efficient-solutions",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/why-the-best-local-plumbers-recommend-water-efficient-solutions/",
       "destination": "/index.html"
     }
   ]
