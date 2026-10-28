@@ -49,6 +49,29 @@ function DemoNotice() {
   );
 }
 
+function cookieClosed() {
+  return typeof document !== "undefined" && /(?:^|; )demo_cookie_notice=closed(?:;|$)/.test(document.cookie);
+}
+
+function CookieBar() {
+  const [open, setOpen] = useState(() => !cookieClosed());
+  if (!open) return null;
+  return (
+    <div className="cookie-bar" role="region" aria-label="Cookie notice">
+      <p>This demo site uses cookies.</p>
+      <button
+        type="button"
+        onClick={() => {
+          document.cookie = "demo_cookie_notice=closed; path=/; max-age=31536000; samesite=lax";
+          setOpen(false);
+        }}
+      >
+        Close
+      </button>
+    </div>
+  );
+}
+
 function NavBranch({ items, onNavigate, onParentClick, onTouch }) {
   return (
     <ul className="submenu">
@@ -288,6 +311,7 @@ export function Layout({ children }) {
         <main id="content">{children}</main>
         <Footer />
       </div>
+      <CookieBar />
     </>
   );
 }
