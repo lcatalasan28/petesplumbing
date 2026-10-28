@@ -273,7 +273,7 @@ export function Layout({ children }) {
               <a href={footer.phoneHref}>{footer.phone}</a>
             </div>
             <Link to="/" className="logo-link">
-              <img src={asset(footer.logo.src)} alt={footer.logo.alt} />
+              <img src={asset(footer.logo.src)} alt={footer.logo.alt} loading="eager" />
             </Link>
             <button
               ref={menuButton}
@@ -317,7 +317,11 @@ export function Layout({ children }) {
 }
 
 function Footer() {
+  const location = useLocation();
   const [playing, setPlaying] = useState(false);
+  const path = normalizePath(location.pathname);
+  const route = path === "/" ? "/" : `${path}/`;
+  const posterInView = !pagesByRoute[route];
 
   return (
     <footer className="site-footer">
@@ -336,7 +340,12 @@ function Footer() {
             </video>
           ) : (
             <button type="button" className="watch-thumb" onClick={() => setPlaying(true)} aria-label="Play video">
-              <img src={asset(footer.poster)} alt="" />
+              <img
+                src={asset(footer.poster)}
+                alt=""
+                loading={posterInView ? "eager" : "lazy"}
+                decoding="async"
+              />
               <span className="play-icon" aria-hidden="true" />
             </button>
           )}
@@ -403,7 +412,7 @@ function Footer() {
         <ul className="brand-logos">
           {footer.logos.map((logo) => (
             <li key={logo.src}>
-              <img src={asset(logo.src)} alt={logo.alt} />
+              <img src={asset(logo.src)} alt={logo.alt} loading="lazy" decoding="async" />
             </li>
           ))}
         </ul>
