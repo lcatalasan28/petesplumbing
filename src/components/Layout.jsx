@@ -313,7 +313,8 @@ function Footer() {
             <p className="footer-nap">
               <strong>{footer.name}</strong>
               <br />
-              {footer.address}
+              {footer.address.replace(", Signal Hill, CA 90755", ",")}{" "}
+              <span className="footer-locality">Signal Hill, CA 90755</span>
               <br />
               <a href={footer.phoneHref}>{footer.phone}</a>
             </p>

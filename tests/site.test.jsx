@@ -287,9 +287,14 @@ describe("demo shell", () => {
     renderAt("/contact/best-local-plumber-service-area/lakewood-ca");
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(document.title).toBe("Best Local Plumber in Lakewood, CA | Pete's Plumbing");
-    expect(document.querySelector('meta[name="description"]').getAttribute("content")).toContain(
-      "Best Local Plumber in Lakewood, CA",
+    expect(document.querySelector('meta[name="description"]').getAttribute("content")).toBe(
+      "Best local plumber in Lakewood, CA. Pete's Plumbing offers reliable plumbing with a lifetime warranty on copper re-pipes.",
     );
+    for (const page of pages) {
+      expect(page.title.length).toBeLessThanOrEqual(60);
+      expect(page.description.length).toBeLessThanOrEqual(160);
+    }
+    expect(document.querySelector(".footer-locality")).toHaveTextContent("Signal Hill, CA 90755");
     const nap = document.querySelector(".footer-nap");
     expect(nap).toHaveTextContent("Pete's Plumbing");
     expect(nap).toHaveTextContent("3099 E Pacific Coast Hwy, Signal Hill, CA 90755");
