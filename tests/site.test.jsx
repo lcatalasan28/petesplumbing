@@ -331,6 +331,21 @@ describe("demo shell", () => {
     expect(document.querySelector(".post-list img")).toHaveAttribute("loading", "lazy");
   });
 
+  it("loads the footer video thumbnail eagerly on the thank-you and 404 pages", () => {
+    renderAt("/thank-you/");
+    const thankYou = document.querySelector(".watch-thumb img");
+    expect(thankYou.getAttribute("src")).toContain("petes-plumbing-video-800w.jpg");
+    expect(thankYou).not.toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/not-a-real-page");
+    const missing = document.querySelector(".watch-thumb img");
+    expect(missing.getAttribute("src")).toContain("petes-plumbing-video-800w.jpg");
+    expect(missing).not.toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/");
+    expect(document.querySelector(".watch-thumb img")).toHaveAttribute("loading", "lazy");
+  });
+
   it("lazy-loads images below the fold and keeps the header logo eager", () => {
     renderAt("/");
     expect(document.querySelector(".logo-link img")).toHaveAttribute("loading", "eager");

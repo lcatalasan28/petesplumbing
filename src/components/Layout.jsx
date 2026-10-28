@@ -317,7 +317,11 @@ export function Layout({ children }) {
 }
 
 function Footer() {
+  const location = useLocation();
   const [playing, setPlaying] = useState(false);
+  const path = normalizePath(location.pathname);
+  const route = path === "/" ? "/" : `${path}/`;
+  const posterInView = !pagesByRoute[route];
 
   return (
     <footer className="site-footer">
@@ -336,7 +340,12 @@ function Footer() {
             </video>
           ) : (
             <button type="button" className="watch-thumb" onClick={() => setPlaying(true)} aria-label="Play video">
-              <img src={asset(footer.poster)} alt="" loading="lazy" decoding="async" />
+              <img
+                src={asset(footer.poster)}
+                alt=""
+                loading={posterInView ? "eager" : "lazy"}
+                decoding="async"
+              />
               <span className="play-icon" aria-hidden="true" />
             </button>
           )}
