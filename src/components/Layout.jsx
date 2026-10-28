@@ -24,6 +24,23 @@ const menu = [
   nav.find((item) => item.text === "Contact"),
 ].filter(Boolean);
 
+const businessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["Plumber", "LocalBusiness"],
+  name: "Pete's Plumbing",
+  url: "https://www.petes-plumbing.com/",
+  telephone: "(562) 599-0106",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "3099 E Pacific Coast Hwy",
+    addressLocality: "Signal Hill",
+    addressRegion: "CA",
+    postalCode: "90755",
+    addressCountry: "US",
+  },
+  identifier: "CSLB #277178",
+};
+
 function DemoNotice() {
   return (
     <p className="demo-notice" role="note">
@@ -231,6 +248,7 @@ export function Layout({ children }) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }} />
       <DemoNotice />
       <a className="skip" href="#content">
         Skip to content
