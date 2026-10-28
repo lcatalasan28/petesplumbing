@@ -27,6 +27,12 @@ img, video, svg {
   height: auto;
 }
 
+.logo-lakewood {
+  width: 492px;
+  max-width: 100%;
+  height: auto;
+}
+
 a { color: var(--teal-dark); }
 
 h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
@@ -787,6 +793,8 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
   gap: 1.4rem;
   margin-top: 1.5rem;
 }
+
+.footer-locality { white-space: nowrap; }
 
 .site-links ul { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; }
 

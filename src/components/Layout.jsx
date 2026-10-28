@@ -24,6 +24,23 @@ const menu = [
   nav.find((item) => item.text === "Contact"),
 ].filter(Boolean);
 
+const businessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["Plumber", "LocalBusiness"],
+  name: "Pete's Plumbing",
+  url: "https://www.petes-plumbing.com/",
+  telephone: "(562) 599-0106",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "3099 E Pacific Coast Hwy",
+    addressLocality: "Signal Hill",
+    addressRegion: "CA",
+    postalCode: "90755",
+    addressCountry: "US",
+  },
+  identifier: "CSLB #277178",
+};
+
 function DemoNotice() {
   return (
     <p className="demo-notice" role="note">
@@ -231,6 +248,7 @@ export function Layout({ children }) {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }} />
       <DemoNotice />
       <a className="skip" href="#content">
         Skip to content
@@ -255,7 +273,7 @@ export function Layout({ children }) {
               <a href={footer.phoneHref}>{footer.phone}</a>
             </div>
             <Link to="/" className="logo-link">
-              <img src={asset(footer.logo.src)} alt={footer.logo.alt} />
+              <img src={asset(footer.logo.src)} alt={footer.logo.alt} loading="eager" />
             </Link>
             <button
               ref={menuButton}
@@ -299,7 +317,11 @@ export function Layout({ children }) {
 }
 
 function Footer() {
+  const location = useLocation();
   const [playing, setPlaying] = useState(false);
+  const path = normalizePath(location.pathname);
+  const route = path === "/" ? "/" : `${path}/`;
+  const posterInView = !pagesByRoute[route];
 
   return (
     <footer className="site-footer">
@@ -318,7 +340,12 @@ function Footer() {
             </video>
           ) : (
             <button type="button" className="watch-thumb" onClick={() => setPlaying(true)} aria-label="Play video">
-              <img src={asset(footer.poster)} alt="" />
+              <img
+                src={asset(footer.poster)}
+                alt=""
+                loading={posterInView ? "eager" : "lazy"}
+                decoding="async"
+              />
               <span className="play-icon" aria-hidden="true" />
             </button>
           )}
@@ -334,7 +361,12 @@ function Footer() {
           </section>
           <section>
             <h2>CONTACT US</h2>
-            <p>
+            <p className="footer-nap">
+              <strong>{footer.name}</strong>
+              <br />
+              {footer.address.replace(", Signal Hill, CA 90755", ",")}{" "}
+              <span className="footer-locality">Signal Hill, CA 90755</span>
+              <br />
               <a href={footer.phoneHref}>{footer.phone}</a>
             </p>
             <p>
@@ -380,7 +412,7 @@ function Footer() {
         <ul className="brand-logos">
           {footer.logos.map((logo) => (
             <li key={logo.src}>
-              <img src={asset(logo.src)} alt={logo.alt} />
+              <img src={asset(logo.src)} alt={logo.alt} loading="lazy" decoding="async" />
             </li>
           ))}
         </ul>

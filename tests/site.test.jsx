@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi, afterEach } from "vitest";
@@ -332,6 +332,123 @@ describe("demo shell", () => {
     expect(header).toHaveAttribute("href", "/reviews");
     expect(header).toHaveTextContent("4.8");
     expect(header).toHaveTextContent("1,184");
+  });
+
+  it("keeps the top affiliation logos and the first blog image eager", () => {
+    renderAt("/affiliations-and-credentials");
+    for (const name of ["petes-plumbing-logo-phcc01-800w.png", "petes-plumbing-logo-nfib-800w.png"]) {
+      const img = document.querySelector(`img[src$="${name}"]`);
+      expect(img).toBeTruthy();
+      expect(img).not.toHaveAttribute("loading", "lazy");
+    }
+    const lakewood = document.querySelector('img[src$="petes-plumbing-logo-lakewood-chamber-of-commerce.png"]');
+    expect(lakewood).toHaveAttribute("width", "492");
+    expect(lakewood).toHaveAttribute("height", "492");
+    expect(lakewood).toHaveClass("logo-lakewood");
+    const logo = readFileSync("public/images/petes-plumbing-logo-lakewood-chamber-of-commerce.png");
+    expect(logo.readUInt32BE(16)).toBeGreaterThanOrEqual(492);
+    expect(logo.readUInt32BE(20)).toBeGreaterThanOrEqual(492);
+    cleanup();
+    renderAt("/blog");
+    const blogImages = [...document.querySelectorAll(".post-list img")];
+    expect(blogImages.length).toBeGreaterThan(1);
+    expect(blogImages[0]).not.toHaveAttribute("loading", "lazy");
+    for (const img of blogImages.slice(1)) expect(img).toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/");
+    expect(document.querySelector(".post-list img")).toHaveAttribute("loading", "lazy");
+  });
+
+  it("loads the footer video thumbnail eagerly on the thank-you and 404 pages", () => {
+    renderAt("/thank-you/");
+    const thankYou = document.querySelector(".watch-thumb img");
+    expect(thankYou.getAttribute("src")).toContain("petes-plumbing-video-800w.jpg");
+    expect(thankYou).not.toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/not-a-real-page");
+    const missing = document.querySelector(".watch-thumb img");
+    expect(missing.getAttribute("src")).toContain("petes-plumbing-video-800w.jpg");
+    expect(missing).not.toHaveAttribute("loading", "lazy");
+    cleanup();
+    renderAt("/");
+    expect(document.querySelector(".watch-thumb img")).toHaveAttribute("loading", "lazy");
+  });
+
+  it("lazy-loads images below the fold and keeps the header logo eager", () => {
+    renderAt("/");
+    expect(document.querySelector(".logo-link img")).toHaveAttribute("loading", "eager");
+    expect(document.querySelector(".service-card img")).toHaveAttribute("loading", "lazy");
+    expect(document.querySelector(".brand-logos img")).toHaveAttribute("loading", "lazy");
+    const html = readFileSync("index.html", "utf8");
+    expect(html).not.toMatch(/googletagmanager|google-analytics|facebook\.net|doubleclick/i);
+    expect(statSync("public/images/petes-plumbing-hero-shower-repair-1920w.jpg").size).toBeLessThan(500_000);
+    expect(statSync("public/images/petes-plumbing-hero-tankless-water-heater-services-1920w.jpg").size).toBeLessThan(300_000);
+  });
+
+  it("publishes Plumber and LocalBusiness details without hours or a rating", () => {
+    renderAt("/");
+    const data = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+    expect(data["@type"]).toEqual(["Plumber", "LocalBusiness"]);
+    expect(data.name).toBe("Pete's Plumbing");
+    expect(data.url).toBe("https://www.petes-plumbing.com/");
+    expect(data.telephone).toBe("(562) 599-0106");
+    expect(data.address.streetAddress).toBe("3099 E Pacific Coast Hwy");
+    expect(data.address.addressLocality).toBe("Signal Hill");
+    expect(data.address.addressRegion).toBe("CA");
+    expect(data.address.postalCode).toBe("90755");
+    expect(data.identifier).toBe("CSLB #277178");
+    expect(data.openingHours).toBeUndefined();
+    expect(data.aggregateRating).toBeUndefined();
+    expect(JSON.stringify(data)).not.toMatch(/openingHours|aggregateRating|Google|BBB/);
+  });
+
+  it("gives every page one H1, a unique title, and a unique description", () => {
+    const titles = new Set();
+    const descriptions = new Set();
+    for (const page of pages) {
+      titles.add(page.title);
+      descriptions.add(page.description);
+      const h1 = page.blocks.filter((block) => block.type === "heading" && block.level === 1);
+      expect(h1).toHaveLength(1);
+    }
+    expect(titles.size).toBe(pages.length);
+    expect(descriptions.size).toBe(pages.length);
+    const lakewood = pages.find((page) => page.route.endsWith("/lakewood-ca/"));
+    expect(lakewood.title).toBe("Best Local Plumber in Lakewood, CA | Pete's Plumbing");
+    expect(lakewood.blocks.find((block) => block.type === "heading" && block.level === 1).text).toBe(
+      "Best Local Plumber in Lakewood, CA",
+    );
+    const post = pages.find((page) => page.route === "/how-local-plumbers-can-save-you-money/");
+    expect(post.blocks.find((block) => block.type === "heading" && block.level === 1).text).toBe(
+      "How Local Plumbers Can Save You Money",
+    );
+    renderAt("/contact/best-local-plumber-service-area/lakewood-ca");
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(document.title).toBe("Best Local Plumber in Lakewood, CA | Pete's Plumbing");
+    expect(document.querySelector('meta[name="description"]').getAttribute("content")).toBe(
+      "Best local plumber in Lakewood, CA. Pete's Plumbing offers reliable plumbing with a lifetime warranty on copper re-pipes.",
+    );
+    for (const page of pages) {
+      expect(page.title.length).toBeLessThanOrEqual(60);
+      expect(page.description.length).toBeLessThanOrEqual(160);
+    }
+    expect(document.querySelector(".footer-locality")).toHaveTextContent("Signal Hill, CA 90755");
+    const nap = document.querySelector(".footer-nap");
+    expect(nap).toHaveTextContent("Pete's Plumbing");
+    expect(nap).toHaveTextContent("3099 E Pacific Coast Hwy, Signal Hill, CA 90755");
+    expect(nap).toHaveTextContent("(562) 599-0106");
+  });
+
+  it("keeps a single ampersand in the capability statement description", () => {
+    const page = pages.find((item) => item.route === "/capability-statement/");
+    expect(page.description).toContain("Greater Long Beach & Lakewood");
+    expect(page.description).not.toContain("&amp;");
+    renderAt("/capability-statement");
+    const meta = document.querySelector('meta[name="description"]');
+    expect(meta.getAttribute("content")).toBe(page.description);
+    expect(meta.getAttribute("content")).not.toContain("&amp;");
+    expect(meta.outerHTML).toContain("Long Beach &amp; Lakewood");
+    expect(meta.outerHTML).not.toContain("&amp;amp;");
   });
 
   it("builds the home hero from the header rating and keeps the estimate form", async () => {
