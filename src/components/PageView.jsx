@@ -439,6 +439,16 @@ function HomeRest({ blocks, page }) {
           {quote.map((block, index) => (
             <Block key={index} block={block} page={page} />
           ))}
+          <ul className="home-quotes">
+            {reviews.reviews.slice(0, 3).map((review) => (
+              <li key={`${review.name}-${review.date}`}>
+                <blockquote>“{review.comment}”</blockquote>
+                <p>
+                  <span className="stars" aria-hidden="true">★★★★★</span> {review.name}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <section className="faq-section">

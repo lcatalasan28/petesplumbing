@@ -259,7 +259,7 @@ export function Layout({ children }) {
             <Link className="rating-link" to="/reviews">
               <span className="rating-score">{reviews.summary.average}</span>
               <Stars />
-              <span className="rating-count">({reviews.summary.count} Ratings &amp; Reviews)</span>
+              <span className="rating-count">({reviews.summary.count.toLocaleString("en-US")} Ratings &amp; Reviews)</span>
             </Link>
             <Link className="btn btn-orange header-estimate" to="/request-estimate">
               Request Estimate

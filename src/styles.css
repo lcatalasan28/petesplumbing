@@ -569,6 +569,49 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
 
 .quote-card h2 { color: #fff; }
 
+.quote-card > p a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.quote-card > p a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.home-quotes {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+  text-align: left;
+}
+
+.home-quotes li {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+}
+
+.home-quotes blockquote {
+  margin: 0 0 0.55rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.home-quotes .stars {
+  color: #f5b301;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.home-quotes p { margin: 0; font-weight: 700; }
+
 .faq-section, .blog-section {
   width: min(1100px, calc(100% - 2rem));
   margin: 2rem auto 2.5rem;

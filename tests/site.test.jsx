@@ -23,13 +23,13 @@ function renderAt(path) {
 }
 
 describe("demo shell", () => {
-  it("keeps version 1.4.0 in package.json and version.json", () => {
+  it("keeps version 1.5.0 in package.json and version.json", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"));
     const version = JSON.parse(readFileSync("version.json", "utf8"));
     const published = JSON.parse(readFileSync("public/version.json", "utf8"));
-    expect(pkg.version).toBe("1.4.0");
-    expect(version.version).toBe("1.4.0");
-    expect(published.version).toBe("1.4.0");
+    expect(pkg.version).toBe("1.5.0");
+    expect(version.version).toBe("1.5.0");
+    expect(published.version).toBe("1.5.0");
   });
 
   it("noindexes every response and disallows crawlers", () => {
@@ -306,6 +306,34 @@ describe("demo shell", () => {
     expect(card.querySelector(".rely-cta")).toHaveTextContent("Request an Estimate Today!");
   });
 
+  it("features existing review quotes and the license near the home actions", () => {
+    renderAt("/");
+    const quote = document.querySelector(".quote-card");
+    expect(quote).toHaveTextContent("Juan and his assistant arrived early");
+    expect(quote).toHaveTextContent("Noah H");
+    expect(quote).not.toHaveTextContent("Google");
+    const quotes = [...quote.querySelectorAll(".home-quotes li")];
+    expect(quotes).toHaveLength(3);
+    for (const item of quotes) {
+      expect(item.querySelector("blockquote").textContent.trim().startsWith("“")).toBe(true);
+      expect(item.querySelector("blockquote").textContent.trim().endsWith("”")).toBe(true);
+    }
+    const reviewLink = within(quote).getByRole("link", { name: "leave a review" });
+    expect(reviewLink).toHaveAttribute("href", "/reviews");
+    const css = readFileSync("src/styles.css", "utf8");
+    expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*color:\s*#fff/);
+    expect(css).toMatch(/\.quote-card > p a\s*\{[^}]*text-decoration:\s*underline/);
+    expect(css).toMatch(/\.quote-card > p a:focus-visible\s*\{[^}]*outline:\s*3px solid #fff/);
+    expect(css).not.toMatch(/\.hero-license|\.home-rating/);
+    expect(document.querySelector(".hero-license")).toBeNull();
+    expect(document.querySelector(".home-rating")).toBeNull();
+    expect(screen.getAllByText("Licensed · CSLB #277178")).toHaveLength(1);
+    const header = document.querySelector(".rating-link");
+    expect(header).toHaveAttribute("href", "/reviews");
+    expect(header).toHaveTextContent("4.8");
+    expect(header).toHaveTextContent("1,184");
+  });
+
   it("keeps the top affiliation logos and the first blog image eager", () => {
     renderAt("/affiliations-and-credentials");
     for (const name of ["petes-plumbing-logo-phcc01-800w.png", "petes-plumbing-logo-nfib-800w.png"]) {
@@ -438,7 +466,7 @@ describe("demo shell", () => {
     const header = document.querySelector(".rating-link");
     const trust = document.querySelector(".home-hero-trust a");
     expect(header).toHaveTextContent(String(reviews.summary.average));
-    expect(header).toHaveTextContent(String(reviews.summary.count));
+    expect(header).toHaveTextContent(reviews.summary.count.toLocaleString("en-US"));
     expect(trust).toHaveAttribute("href", "/reviews");
     expect(trust).toHaveTextContent(`${reviews.summary.average} · ${reviews.summary.count.toLocaleString("en-US")} Ratings & Reviews`);
     expect(screen.getByText("Licensed · CSLB #277178")).toBeInTheDocument();
