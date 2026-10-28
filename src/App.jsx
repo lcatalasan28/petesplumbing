@@ -12,11 +12,23 @@ export function App() {
   const page = pagesByRoute[route];
 
   useEffect(() => {
-    if (route === "/thank-you/") {
-      document.title = "Thank you for contacting us.";
-      return;
+    let description = document.querySelector('meta[name="description"]');
+    if (!description) {
+      description = document.createElement("meta");
+      description.setAttribute("name", "description");
+      document.head.appendChild(description);
     }
-    document.title = page?.title || "Page not found";
+    let title = "Page not found";
+    let summary = "That page is not on this Pete's Plumbing demo.";
+    if (route === "/thank-you/") {
+      title = "Thank you for contacting us.";
+      summary = "Thank you for contacting Pete's Plumbing in Signal Hill. We will get back to you as soon as possible.";
+    } else if (page) {
+      title = page.title;
+      summary = page.description;
+    }
+    document.title = title;
+    if (description && summary) description.setAttribute("content", summary);
   }, [page, route]);
 
   let body;

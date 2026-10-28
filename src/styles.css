@@ -745,6 +745,8 @@ h1, h2, h3, .page-banner, .hero-copy h1, .hero-copy h2 {
   margin-top: 1.5rem;
 }
 
+.footer-locality { white-space: nowrap; }
+
 .site-links ul { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; }
 
 .brand-logos {

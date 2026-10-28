@@ -51,6 +51,8 @@
     "Long Beach, CA",
     "Lakewood, CA"
   ],
+  "name": "Pete's Plumbing",
+  "address": "3099 E Pacific Coast Hwy, Signal Hill, CA 90755",
   "phone": "(562) 599-0106",
   "phoneHref": "tel:(562) 599-0106",
   "license": "CSLB License #277178",
